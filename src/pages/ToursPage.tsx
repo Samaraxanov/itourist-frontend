@@ -33,53 +33,75 @@ export default function ToursPage() {
   });
 
   const update = (patch: Partial<TourFilters>) => setFilters((prev) => ({ ...prev, page: 1, ...patch }));
+  const hasFilters = Boolean(filters.q || filters.regionId || filters.categoryId);
+  const items = data?.items ?? [];
+  // Featured band only on the unfiltered first page.
+  const featured = !hasFilters && filters.page === 1 ? items.filter((x) => x.featured) : [];
+  const rest = featured.length ? items.filter((x) => !x.featured) : items;
 
   return (
     <div>
-      {/* Hero: a single strong statement, not a stat block */}
-      <section className="bg-majolica-900 text-white">
-        <div className="mx-auto max-w-6xl px-4 py-16">
-          <h1 className="font-display text-4xl md:text-5xl font-bold leading-tight max-w-2xl">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-majolica-900 text-white">
+        <div className="absolute inset-0 bg-hero-grid [background-size:22px_22px] opacity-60" />
+        <div className="relative mx-auto max-w-6xl px-4 py-20">
+          <span className="inline-block rounded-full bg-white/10 px-3 py-1 text-xs font-medium tracking-wide text-majolica-100">
+            🇺🇿 Uzbekistan
+          </span>
+          <h1 className="mt-4 max-w-2xl font-display text-4xl font-bold leading-tight md:text-5xl">
             {t('tagline')}
           </h1>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl">
+          <div className="mt-8 flex max-w-xl gap-3">
             <input
               type="search"
               placeholder={t('searchPlaceholder')}
               defaultValue={filters.q}
               onChange={(e) => update({ q: e.target.value || undefined })}
-              className="flex-1 rounded-lg border-0 px-4 py-3 text-majolica-900 placeholder:text-majolica-400 focus:ring-2 focus:ring-ochre-400"
+              className="flex-1 rounded-xl border-0 px-4 py-3.5 text-majolica-900 shadow-card placeholder:text-majolica-400 focus:ring-2 focus:ring-ochre-400"
             />
           </div>
+
+          {/* Region quick chips */}
+          {regions.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-2">
+              {regions.slice(0, 6).map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => update({ regionId: filters.regionId === r.id ? undefined : r.id })}
+                  className={`rounded-full px-3 py-1.5 text-sm transition ${
+                    filters.regionId === r.id ? 'bg-ochre-500 text-white' : 'bg-white/10 text-majolica-100 hover:bg-white/20'
+                  }`}
+                >
+                  {pick(r.name, locale)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       <div className="mx-auto max-w-6xl px-4 py-8">
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
-          <select
-            value={filters.regionId ?? ''}
-            onChange={(e) => update({ regionId: e.target.value || undefined })}
-            className="rounded-lg border border-majolica-200 bg-white px-3 py-2 text-sm"
-            aria-label={t('region')}
+        {/* Category chips + sort */}
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => update({ categoryId: undefined })}
+            className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+              !filters.categoryId ? 'bg-majolica-900 text-white' : 'border border-majolica-100 bg-white text-majolica-600 hover:bg-majolica-50'
+            }`}
           >
-            <option value="">{t('allRegions')}</option>
-            {regions.map((r) => (
-              <option key={r.id} value={r.id}>{pick(r.name, locale)}</option>
-            ))}
-          </select>
-
-          <select
-            value={filters.categoryId ?? ''}
-            onChange={(e) => update({ categoryId: e.target.value || undefined })}
-            className="rounded-lg border border-majolica-200 bg-white px-3 py-2 text-sm"
-            aria-label={t('category')}
-          >
-            <option value="">{t('allCategories')}</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>{pick(c.name, locale)}</option>
-            ))}
-          </select>
+            {t('allCategories')}
+          </button>
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => update({ categoryId: filters.categoryId === c.id ? undefined : c.id })}
+              className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                filters.categoryId === c.id ? 'bg-majolica-900 text-white' : 'border border-majolica-100 bg-white text-majolica-600 hover:bg-majolica-50'
+              }`}
+            >
+              {c.icon} {pick(c.name, locale)}
+            </button>
+          ))}
 
           <select
             value={filters.sort}
@@ -92,26 +114,51 @@ export default function ToursPage() {
             <option value="price_desc">{t('priceHigh')}</option>
             <option value="rating">{t('topRated')}</option>
           </select>
+          {hasFilters && (
+            <button
+              onClick={() => setFilters({ page: 1, pageSize: 12, sort: 'newest' })}
+              className="rounded-lg px-3 py-2 text-sm text-majolica-500 hover:bg-majolica-50"
+            >
+              ✕ {t('clearFilters')}
+            </button>
+          )}
         </div>
 
-        {/* Results */}
+        {/* Featured band */}
+        {featured.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-4 flex items-center gap-2 font-display text-xl font-semibold text-majolica-900">
+              <span className="text-ochre-500">★</span> {t('featuredTours')}
+            </h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((tour) => <TourCard key={tour.id} tour={tour} />)}
+            </div>
+          </section>
+        )}
+
+        {/* All results */}
+        <div className="mb-4 flex items-baseline justify-between">
+          <h2 className="font-display text-xl font-semibold text-majolica-900">
+            {hasFilters ? t('search') : t('allTours')}
+          </h2>
+          {data && <span className="text-sm text-majolica-400">{data.pagination.total} {t('results')}</span>}
+        </div>
+
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="aspect-[4/3] animate-pulse rounded-xl bg-majolica-50" />
             ))}
           </div>
         ) : isError ? (
           <p className="py-12 text-center text-majolica-600">Couldn’t load tours. Please retry.</p>
-        ) : data && data.items.length > 0 ? (
+        ) : rest.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {data.items.map((tour) => (
-                <TourCard key={tour.id} tour={tour} />
-              ))}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {rest.map((tour) => <TourCard key={tour.id} tour={tour} />)}
             </div>
 
-            {data.pagination.totalPages > 1 && (
+            {data && data.pagination.totalPages > 1 && (
               <div className="mt-10 flex justify-center gap-2">
                 {Array.from({ length: data.pagination.totalPages }).map((_, i) => {
                   const page = i + 1;
@@ -122,7 +169,7 @@ export default function ToursPage() {
                       className={`h-9 w-9 rounded-lg text-sm font-medium ${
                         page === data.pagination.page
                           ? 'bg-majolica-600 text-white'
-                          : 'bg-white border border-majolica-200 text-majolica-700 hover:bg-majolica-50'
+                          : 'border border-majolica-200 bg-white text-majolica-700 hover:bg-majolica-50'
                       }`}
                     >
                       {page}
@@ -132,9 +179,9 @@ export default function ToursPage() {
               </div>
             )}
           </>
-        ) : (
+        ) : featured.length === 0 ? (
           <p className="py-12 text-center text-majolica-600">{t('noResults')}</p>
-        )}
+        ) : null}
       </div>
     </div>
   );

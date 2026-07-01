@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../../lib/api';
 import ImageUploader from '../../components/ImageUploader';
+import { PageHeader, Card } from '../../components/ui/primitives';
 import type { Locale, Lookup, Multilingual, TourCard } from '../../types';
 
 interface FormState {
@@ -91,15 +92,10 @@ export default function TourFormPage() {
   const langs: Locale[] = ['uz', 'ru', 'en'];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <div className="mb-6 flex items-center gap-4">
-        <h1 className="font-display text-2xl font-bold text-majolica-900">
-          {isEdit ? t('editTour') : t('addTour')}
-        </h1>
-        <Link to="/firm" className="text-sm text-majolica-600 hover:underline">← {t('dashboard')}</Link>
-      </div>
+    <div className="max-w-2xl">
+      <PageHeader title={isEdit ? t('editTour') : t('addTour')} />
 
-      <div className="space-y-6">
+      <Card className="space-y-6 p-6">
         <fieldset>
           <legend className="text-sm font-medium text-majolica-700 mb-2">Title</legend>
           {langs.map((l) => (
@@ -188,7 +184,7 @@ export default function TourFormPage() {
           className="rounded-lg bg-majolica-600 px-6 py-2.5 font-semibold text-white hover:bg-majolica-700 disabled:opacity-50">
           {t('save')}
         </button>
-      </div>
+      </Card>
     </div>
   );
 }

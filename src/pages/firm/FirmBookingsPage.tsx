@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../../lib/api';
 import { t as pick, formatPrice, formatDate } from '../../lib/format';
+import { PageHeader, Card, EmptyState } from '../../components/ui/primitives';
 import StatusBadge from '../../components/StatusBadge';
 import type { Booking, Locale } from '../../types';
 
@@ -32,18 +32,15 @@ export default function FirmBookingsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      <div className="mb-6 flex items-center gap-4">
-        <h1 className="font-display text-2xl font-bold text-majolica-900">{t('incomingRequests')}</h1>
-        <Link to="/firm" className="text-sm text-majolica-600 hover:underline">← {t('dashboard')}</Link>
-      </div>
+    <div>
+      <PageHeader title={t('incomingRequests')} subtitle={t('bookingsSubtitle')} />
 
       {isLoading ? (
         <p className="text-majolica-400">{t('loading')}</p>
       ) : bookings && bookings.length > 0 ? (
         <div className="space-y-3">
           {bookings.map((b) => (
-            <div key={b.id} className="rounded-xl border border-majolica-100 bg-white p-4">
+            <Card key={b.id} className="p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
@@ -87,11 +84,11 @@ export default function FirmBookingsPage() {
                   )}
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ) : (
-        <p className="text-majolica-600">{t('noBookings')}</p>
+        <EmptyState icon="📩" title={t('noBookings')} />
       )}
     </div>
   );

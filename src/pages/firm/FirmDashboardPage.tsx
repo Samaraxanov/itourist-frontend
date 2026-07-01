@@ -3,17 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
-import { t as pick, formatPrice } from '../../lib/format';
+import { t as pick, formatPrice, formatDate } from '../../lib/format';
+import { PageHeader, StatCard, Card, BreakdownBar, EmptyState } from '../../components/ui/primitives';
+import StatusBadge from '../../components/StatusBadge';
 import type { FirmAnalytics, Locale, TourCard } from '../../types';
-
-function Stat({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-xl border border-majolica-100 bg-white p-4">
-      <div className="text-2xl font-bold text-majolica-900">{value}</div>
-      <div className="text-xs text-majolica-500">{label}</div>
-    </div>
-  );
-}
 
 export default function FirmDashboardPage() {
   const { t, i18n } = useTranslation();
@@ -25,7 +18,6 @@ export default function FirmDashboardPage() {
     queryKey: ['firm-analytics'],
     queryFn: () => apiRequest<FirmAnalytics>('/firms/me/analytics', { auth: true }),
   });
-
   const { data: tours, isLoading } = useQuery({
     queryKey: ['firm-tours'],
     queryFn: () => apiRequest<TourCard[]>('/tours/mine', { auth: true }),
@@ -39,57 +31,90 @@ export default function FirmDashboardPage() {
 
   const notVerified = Boolean(user?.firm && user.firm.status !== 'VERIFIED');
   const cur = analytics?.recentBookings?.[0]?.currency ?? 'UZS';
+  const bk = analytics?.bookings ?? {};
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl font-bold text-majolica-900">{t('dashboard')}</h1>
-        <div className="flex flex-wrap gap-2">
-          <Link to="/firm/bookings" className="rounded-lg border border-majolica-200 px-3 py-2 text-sm font-medium text-majolica-700 hover:bg-majolica-50">
-            {t('incomingRequests')}
-          </Link>
-          <Link to="/firm/profile" className="rounded-lg border border-majolica-200 px-3 py-2 text-sm font-medium text-majolica-700 hover:bg-majolica-50">
-            {t('editProfile')}
-          </Link>
+    <div>
+      <PageHeader
+        title={`${t('welcomeBack')}, ${user?.firm?.name ?? ''}`}
+        subtitle={t('overviewSubtitle')}
+        actions={
           <Link to="/firm/tours/new" className="rounded-lg bg-ochre-500 px-4 py-2 text-sm font-semibold text-white hover:bg-ochre-600">
-            {t('addTour')}
+            + {t('addTour')}
           </Link>
-        </div>
-      </div>
+        }
+      />
 
       {notVerified && (
-        <div className="mt-4 rounded-lg bg-ochre-400/15 border border-ochre-400 p-3 text-sm text-ochre-600">
-          Your firm is <strong>{user?.firm?.status.toLowerCase()}</strong>. You can create tours as drafts,
-          but publishing is enabled only after an admin verifies your firm.
+        <div className="mb-5 rounded-xl border border-ochre-400 bg-ochre-400/10 p-4 text-sm text-ochre-700">
+          Your firm is <strong>{user?.firm?.status.toLowerCase()}</strong>. You can build tours as drafts, but
+          publishing unlocks once an admin verifies your firm.
         </div>
       )}
 
-      {/* Analytics */}
+      {/* KPI cards */}
       {analytics && (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          <Stat label={t('totalTours')} value={`${analytics.tours.published}/${analytics.tours.total}`} />
-          <Stat label={t('totalBookings')} value={Object.values(analytics.bookings).reduce((a, b) => a + (b ?? 0), 0)} />
-          <Stat label={t('departures')} value={analytics.upcomingDepartures} />
-          <Stat label={t('payouts')} value={formatPrice(analytics.revenue.payouts, cur, locale)} />
-          <Stat label={t('commission')} value={formatPrice(analytics.revenue.commission, cur, locale)} />
-          <Stat label={t('avgRating')} value={analytics.rating.count > 0 ? `★ ${analytics.rating.avg}` : '—'} />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <StatCard label={t('totalTours')} value={`${analytics.tours.published}/${analytics.tours.total}`} icon="🧭" />
+          <StatCard label={t('totalBookings')} value={Object.values(bk).reduce((a, b) => a + (b ?? 0), 0)} icon="📩" />
+          <StatCard label={t('departures')} value={analytics.upcomingDepartures} icon="🗓️" />
+          <StatCard label={t('payouts')} value={formatPrice(analytics.revenue.payouts, cur, locale)} icon="💳" accent="emerald" />
+          <StatCard label={t('avgRating')} value={analytics.rating.count > 0 ? `★ ${analytics.rating.avg}` : '—'} icon="⭐" accent="ochre" hint={`${analytics.rating.count} ${t('reviews').toLowerCase()}`} />
         </div>
       )}
 
-      <h2 className="mt-8 mb-3 font-display text-xl font-semibold text-majolica-900">{t('myTours')}</h2>
+      {/* Breakdown + recent */}
+      {analytics && (
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+          <Card className="p-5">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-majolica-500">{t('bookings')}</h3>
+            <BreakdownBar
+              segments={[
+                { label: t('statusREQUESTED'), value: bk.REQUESTED ?? 0, color: 'bg-ochre-400' },
+                { label: t('statusCONFIRMED'), value: bk.CONFIRMED ?? 0, color: 'bg-majolica-500' },
+                { label: t('statusCOMPLETED'), value: bk.COMPLETED ?? 0, color: 'bg-emerald-500' },
+                { label: t('statusCANCELLED'), value: (bk.CANCELLED ?? 0) + (bk.DECLINED ?? 0), color: 'bg-majolica-200' },
+              ]}
+            />
+          </Card>
+          <Card className="p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-majolica-500">{t('recent')}</h3>
+              <Link to="/firm/bookings" className="text-sm text-majolica-600 hover:underline">{t('viewAll')}</Link>
+            </div>
+            <div className="space-y-2">
+              {analytics.recentBookings.length === 0 && <p className="text-sm text-majolica-400">{t('noBookings')}</p>}
+              {analytics.recentBookings.map((b) => (
+                <div key={b.id} className="flex items-center justify-between gap-2 text-sm">
+                  <span className="truncate text-majolica-700">{pick(b.tour.title, locale)}</span>
+                  <span className="flex items-center gap-2 shrink-0">
+                    <StatusBadge status={b.status} />
+                    <span className="text-majolica-400">{formatDate(b.createdAt, locale)}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Tours */}
+      <h2 className="mt-8 mb-3 font-display text-lg font-semibold text-majolica-900">{t('myTours')}</h2>
       {isLoading ? (
         <p className="text-majolica-400">{t('loading')}</p>
       ) : tours && tours.length > 0 ? (
-        <div className="divide-y divide-majolica-100 rounded-xl border border-majolica-100 bg-white">
+        <Card className="divide-y divide-majolica-100">
           {tours.map((tour) => (
             <div key={tour.id} className="flex flex-wrap items-center gap-4 p-4">
-              <img src={tour.images[0]} alt="" className="h-14 w-20 rounded object-cover bg-majolica-50" />
+              {tour.images[0]
+                ? <img src={tour.images[0]} alt="" className="h-14 w-20 rounded-lg object-cover bg-majolica-50" />
+                : <div className="flex h-14 w-20 items-center justify-center rounded-lg bg-majolica-50 text-majolica-200">✦</div>}
               <div className="min-w-0 flex-1">
                 <div className="font-medium text-majolica-900 truncate">{pick(tour.title, locale)}</div>
                 <div className="text-sm text-majolica-500">{formatPrice(tour.priceFrom, tour.currency, locale)}</div>
               </div>
               <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                tour.status === 'PUBLISHED' ? 'bg-majolica-100 text-majolica-700' : 'bg-majolica-50 text-majolica-400'
+                tour.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-700' : 'bg-majolica-50 text-majolica-400'
               }`}>
                 {tour.status === 'PUBLISHED' ? t('published') : t('draft')}
               </span>
@@ -104,9 +129,9 @@ export default function FirmDashboardPage() {
               </button>
             </div>
           ))}
-        </div>
+        </Card>
       ) : (
-        <p className="text-majolica-600">No tours yet. Create your first one.</p>
+        <EmptyState icon="🧭" title="No tours yet" hint="Create your first tour to get started." />
       )}
     </div>
   );

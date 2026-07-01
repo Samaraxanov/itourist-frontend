@@ -1,33 +1,10 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
-import type { Locale } from '../types';
+import LanguageSwitcher from './LanguageSwitcher';
 import NotificationBell from './NotificationBell';
 
-function LanguageSwitcher() {
-  const { i18n } = useTranslation();
-  const langs: Locale[] = ['uz', 'ru', 'en'];
-  return (
-    <div className="flex items-center gap-1 text-sm">
-      {langs.map((l) => (
-        <button
-          key={l}
-          onClick={() => {
-            i18n.changeLanguage(l);
-            localStorage.setItem('locale', l);
-          }}
-          className={`rounded px-2 py-1 uppercase transition ${
-            i18n.language === l ? 'bg-majolica-600 text-white' : 'text-majolica-600 hover:bg-majolica-50'
-          }`}
-          aria-pressed={i18n.language === l}
-        >
-          {l}
-        </button>
-      ))}
-    </div>
-  );
-}
-
+// Marketplace (public + traveller) shell: top navbar + editorial footer.
 export default function Layout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
@@ -36,9 +13,9 @@ export default function Layout() {
   const linkCls = 'text-sm font-medium text-majolica-700 hover:text-majolica-900';
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-majolica-100 bg-white/80 backdrop-blur sticky top-0 z-20">
-        <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between gap-4">
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-20 border-b border-majolica-100 bg-white/80 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
           <Link to="/" className="font-display text-2xl font-bold text-majolica-700">
             {t('brand')}
           </Link>
@@ -46,21 +23,12 @@ export default function Layout() {
             <LanguageSwitcher />
             {user ? (
               <>
-                {user.role === 'USER' && (
-                  <Link to="/bookings" className={linkCls}>{t('myBookings')}</Link>
-                )}
-                {user.role === 'FIRM' && (
-                  <Link to="/firm" className={linkCls}>{t('dashboard')}</Link>
-                )}
-                {user.role === 'ADMIN' && (
-                  <Link to="/admin" className={linkCls}>{t('admin')}</Link>
-                )}
+                {user.role === 'USER' && <Link to="/bookings" className={linkCls}>{t('myBookings')}</Link>}
+                {user.role === 'FIRM' && <Link to="/firm" className={linkCls}>{t('dashboard')}</Link>}
+                {user.role === 'ADMIN' && <Link to="/admin" className={linkCls}>{t('admin')}</Link>}
                 <NotificationBell />
                 <button
-                  onClick={async () => {
-                    await logout();
-                    navigate('/');
-                  }}
+                  onClick={async () => { await logout(); navigate('/'); }}
                   className="text-sm font-medium text-majolica-600 hover:text-majolica-900"
                 >
                   {t('logout')}
@@ -69,10 +37,7 @@ export default function Layout() {
             ) : (
               <>
                 <Link to="/login" className={linkCls}>{t('login')}</Link>
-                <Link
-                  to="/register"
-                  className="rounded-lg bg-ochre-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-ochre-600"
-                >
+                <Link to="/register" className="rounded-lg bg-ochre-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-ochre-600">
                   {t('register')}
                 </Link>
               </>
@@ -85,8 +50,12 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-majolica-100 py-8 text-center text-sm text-majolica-400">
-        {t('brand')} — {t('tagline')}
+      <footer className="mt-16 border-t border-majolica-100 bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-10 text-center">
+          <div className="font-display text-xl font-bold text-majolica-700">{t('brand')}</div>
+          <p className="max-w-md text-sm text-majolica-400">{t('tagline')}</p>
+          <p className="mt-2 text-xs text-majolica-300">🇺🇿 Uzbekistan · uz · ru · en</p>
+        </div>
       </footer>
     </div>
   );

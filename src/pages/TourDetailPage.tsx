@@ -45,9 +45,8 @@ export default function TourDetailPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      {tour.images[0] && (
-        <img src={tour.images[0]} alt="" className="mb-6 aspect-[16/7] w-full rounded-2xl object-cover" />
-      )}
+      <Gallery images={tour.images} />
+      <div className="h-6" />
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
@@ -121,6 +120,34 @@ export default function TourDetailPage() {
           </div>
         </aside>
       </div>
+    </div>
+  );
+}
+
+// Image gallery: a large hero image + a thumbnail strip to switch it.
+function Gallery({ images }: { images: string[] }) {
+  const [active, setActive] = useState(0);
+  if (images.length === 0) {
+    return <div className="flex aspect-[16/7] w-full items-center justify-center rounded-2xl bg-majolica-50 text-4xl text-majolica-200">✦</div>;
+  }
+  return (
+    <div>
+      <img src={images[active]} alt="" className="aspect-[16/7] w-full rounded-2xl object-cover shadow-card" />
+      {images.length > 1 && (
+        <div className="mt-3 flex gap-3 overflow-x-auto pb-1">
+          {images.map((src, i) => (
+            <button
+              key={src}
+              onClick={() => setActive(i)}
+              className={`h-16 w-24 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                i === active ? 'border-ochre-500' : 'border-transparent opacity-70 hover:opacity-100'
+              }`}
+            >
+              <img src={src} alt="" className="h-full w-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

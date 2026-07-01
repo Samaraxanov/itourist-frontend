@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../../lib/api';
 import { formatDate } from '../../lib/format';
+import { PageHeader, Card, EmptyState } from '../../components/ui/primitives';
 import StatusBadge from '../../components/StatusBadge';
 import type { Departure, Locale } from '../../types';
 
@@ -47,14 +48,11 @@ export default function FirmDeparturesPage() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
-      <div className="mb-6 flex items-center gap-4">
-        <h1 className="font-display text-2xl font-bold text-majolica-900">{t('manageDepartures')}</h1>
-        <Link to="/firm" className="text-sm text-majolica-600 hover:underline">← {t('dashboard')}</Link>
-      </div>
+    <div className="max-w-3xl">
+      <PageHeader title={t('manageDepartures')} />
 
       {/* Add departure */}
-      <div className="mb-6 rounded-xl border border-majolica-100 bg-white p-4">
+      <Card className="mb-6 p-4">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="text-sm text-majolica-700">
             {t('startDate')}
@@ -83,12 +81,12 @@ export default function FirmDeparturesPage() {
         >
           + {t('addDeparture')}
         </button>
-      </div>
+      </Card>
 
       {isLoading ? (
         <p className="text-majolica-400">{t('loading')}</p>
       ) : departures && departures.length > 0 ? (
-        <div className="divide-y divide-majolica-100 rounded-xl border border-majolica-100 bg-white">
+        <Card className="divide-y divide-majolica-100">
           {departures.map((d) => (
             <div key={d.id} className="flex items-center gap-3 p-4">
               <div className="flex-1">
@@ -112,9 +110,9 @@ export default function FirmDeparturesPage() {
               )}
             </div>
           ))}
-        </div>
+        </Card>
       ) : (
-        <p className="text-majolica-600">No departures yet.</p>
+        <EmptyState icon="🗓️" title="No departures yet" hint="Add a date above to open seats." />
       )}
     </div>
   );

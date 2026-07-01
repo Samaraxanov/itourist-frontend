@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
 import ImageUploader from '../../components/ImageUploader';
+import { PageHeader, Card } from '../../components/ui/primitives';
 import type { FirmProfile, Locale } from '../../types';
 
 // Firm self-service profile editor. Loads the firm's public profile by slug
@@ -55,13 +55,10 @@ export default function FirmProfilePage() {
   const langs: Locale[] = ['uz', 'ru', 'en'];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <div className="mb-6 flex items-center gap-4">
-        <h1 className="font-display text-2xl font-bold text-majolica-900">{t('firmProfile')}</h1>
-        <Link to="/firm" className="text-sm text-majolica-600 hover:underline">← {t('dashboard')}</Link>
-      </div>
+    <div className="max-w-2xl">
+      <PageHeader title={t('firmProfile')} />
 
-      <div className="space-y-4">
+      <Card className="space-y-4 p-6">
         <label className="block text-sm text-majolica-700">
           {t('firmName')}
           <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -117,7 +114,7 @@ export default function FirmProfilePage() {
           </button>
           {saved && <span className="text-sm text-emerald-600">✓ {t('save')}</span>}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
