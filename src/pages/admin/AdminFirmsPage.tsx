@@ -67,7 +67,7 @@ export default function AdminFirmsPage() {
               <div className="flex gap-2">
                 {f.status !== 'VERIFIED' && (
                   <button onClick={() => verify.mutate({ id: f.id, status: 'VERIFIED' })}
-                    className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700">
+                    className="rounded-lg bg-majolica-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-majolica-700">
                     {t('verify')}
                   </button>
                 )}
@@ -79,7 +79,7 @@ export default function AdminFirmsPage() {
                 )}
                 {f.status !== 'REJECTED' && (
                   <button onClick={() => verify.mutate({ id: f.id, status: 'REJECTED' })}
-                    className="rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50">
+                    className="rounded-lg border border-ochre-300 px-3 py-1.5 text-sm font-medium text-ochre-600 hover:bg-ochre-400/10">
                     {t('reject')}
                   </button>
                 )}

@@ -1,24 +1,25 @@
 import { useTranslation } from 'react-i18next';
 
-// Colour-coded status pill for booking, payment, and firm statuses. The label is
-// looked up from i18n (keys like `statusCONFIRMED`, `paymentCAPTURED`).
+// Colour-coded status pill using only the brand palette:
+//   orange = pending / needs attention · blue = active/positive · muted = terminal.
 const COLORS: Record<string, string> = {
-  // Booking
-  REQUESTED: 'bg-ochre-400/20 text-ochre-600',
+  // pending / attention (orange)
+  REQUESTED: 'bg-ochre-400/15 text-ochre-600',
+  PENDING: 'bg-ochre-400/15 text-ochre-600',
+  REFUNDED: 'bg-ochre-400/15 text-ochre-600',
+  // active (blue tint)
   CONFIRMED: 'bg-majolica-100 text-majolica-700',
-  DECLINED: 'bg-red-100 text-red-700',
-  CANCELLED: 'bg-majolica-50 text-majolica-400',
-  COMPLETED: 'bg-emerald-100 text-emerald-700',
-  // Firm
-  PENDING: 'bg-ochre-400/20 text-ochre-600',
-  VERIFIED: 'bg-emerald-100 text-emerald-700',
-  SUSPENDED: 'bg-red-100 text-red-700',
-  REJECTED: 'bg-red-100 text-red-700',
-  // Payment
   AUTHORIZED: 'bg-majolica-100 text-majolica-700',
-  CAPTURED: 'bg-emerald-100 text-emerald-700',
-  REFUNDED: 'bg-ochre-400/20 text-ochre-600',
-  FAILED: 'bg-red-100 text-red-700',
+  // success (solid blue)
+  COMPLETED: 'bg-majolica-600 text-white',
+  VERIFIED: 'bg-majolica-600 text-white',
+  CAPTURED: 'bg-majolica-600 text-white',
+  // terminal / negative (muted neutral)
+  DECLINED: 'bg-majolica-50 text-majolica-400',
+  CANCELLED: 'bg-majolica-50 text-majolica-400',
+  REJECTED: 'bg-majolica-50 text-majolica-400',
+  SUSPENDED: 'bg-majolica-50 text-majolica-400',
+  FAILED: 'bg-majolica-50 text-majolica-400',
 };
 
 export default function StatusBadge({ status, kind = 'booking' }: { status: string; kind?: 'booking' | 'payment' | 'firm' }) {

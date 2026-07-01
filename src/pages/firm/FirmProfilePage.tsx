@@ -106,13 +106,13 @@ export default function FirmProfilePage() {
           </div>
         </div>
 
-        {save.isError && <p className="text-sm text-red-600">Could not save.</p>}
+        {save.isError && <p className="text-sm text-ochre-600">Could not save.</p>}
         <div className="flex items-center gap-3">
           <button onClick={() => save.mutate()} disabled={save.isPending}
             className="rounded-lg bg-majolica-600 px-6 py-2.5 font-semibold text-white hover:bg-majolica-700 disabled:opacity-50">
             {t('save')}
           </button>
-          {saved && <span className="text-sm text-emerald-600">✓ {t('save')}</span>}
+          {saved && <span className="text-sm text-majolica-600">✓ {t('save')}</span>}
         </div>
       </Card>
     </div>

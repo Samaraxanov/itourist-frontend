@@ -58,7 +58,7 @@ export default function FirmDashboardPage() {
           <StatCard label={t('totalTours')} value={`${analytics.tours.published}/${analytics.tours.total}`} icon="🧭" />
           <StatCard label={t('totalBookings')} value={Object.values(bk).reduce((a, b) => a + (b ?? 0), 0)} icon="📩" />
           <StatCard label={t('departures')} value={analytics.upcomingDepartures} icon="🗓️" />
-          <StatCard label={t('payouts')} value={formatPrice(analytics.revenue.payouts, cur, locale)} icon="💳" accent="emerald" />
+          <StatCard label={t('payouts')} value={formatPrice(analytics.revenue.payouts, cur, locale)} icon="💳" accent="ochre" />
           <StatCard label={t('avgRating')} value={analytics.rating.count > 0 ? `★ ${analytics.rating.avg}` : '—'} icon="⭐" accent="ochre" hint={`${analytics.rating.count} ${t('reviews').toLowerCase()}`} />
         </div>
       )}
@@ -72,7 +72,7 @@ export default function FirmDashboardPage() {
               segments={[
                 { label: t('statusREQUESTED'), value: bk.REQUESTED ?? 0, color: 'bg-ochre-400' },
                 { label: t('statusCONFIRMED'), value: bk.CONFIRMED ?? 0, color: 'bg-majolica-500' },
-                { label: t('statusCOMPLETED'), value: bk.COMPLETED ?? 0, color: 'bg-emerald-500' },
+                { label: t('statusCOMPLETED'), value: bk.COMPLETED ?? 0, color: 'bg-majolica-700' },
                 { label: t('statusCANCELLED'), value: (bk.CANCELLED ?? 0) + (bk.DECLINED ?? 0), color: 'bg-majolica-200' },
               ]}
             />
@@ -114,7 +114,7 @@ export default function FirmDashboardPage() {
                 <div className="text-sm text-majolica-500">{formatPrice(tour.priceFrom, tour.currency, locale)}</div>
               </div>
               <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                tour.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-700' : 'bg-majolica-50 text-majolica-400'
+                tour.status === 'PUBLISHED' ? 'bg-majolica-100 text-majolica-700' : 'bg-majolica-50 text-majolica-400'
               }`}>
                 {tour.status === 'PUBLISHED' ? t('published') : t('draft')}
               </span>

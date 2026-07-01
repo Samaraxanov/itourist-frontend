@@ -47,7 +47,7 @@ export default function AdminToursPage() {
                     <span className="font-medium text-majolica-900 truncate">{pick(tr.title, locale)}</span>
                     {tr.featured && <span className="rounded-full bg-ochre-400/20 px-2 py-0.5 text-xs font-medium text-ochre-600">★ {t('featured')}</span>}
                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                      tr.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-700' : 'bg-majolica-50 text-majolica-400'
+                      tr.status === 'PUBLISHED' ? 'bg-majolica-100 text-majolica-700' : 'bg-majolica-50 text-majolica-400'
                     }`}>{tr.status}</span>
                   </div>
                   <div className="text-sm text-majolica-500">
@@ -64,7 +64,7 @@ export default function AdminToursPage() {
                   </button>
                   {tr.status === 'PUBLISHED' && (
                     <button onClick={() => takeDown.mutate(tr.id)}
-                      className="rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50">
+                      className="rounded-lg border border-ochre-300 px-3 py-1.5 text-sm font-medium text-ochre-600 hover:bg-ochre-400/10">
                       {t('takeDown')}
                     </button>
                   )}

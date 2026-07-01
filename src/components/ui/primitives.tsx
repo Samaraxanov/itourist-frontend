@@ -37,12 +37,10 @@ export function StatCard({
   value: ReactNode;
   icon?: string;
   hint?: string;
-  accent?: 'majolica' | 'ochre' | 'emerald';
+  accent?: 'majolica' | 'ochre';
 }) {
   const ring =
-    accent === 'ochre' ? 'bg-ochre-400/15 text-ochre-600'
-    : accent === 'emerald' ? 'bg-emerald-100 text-emerald-700'
-    : 'bg-majolica-50 text-majolica-600';
+    accent === 'ochre' ? 'bg-ochre-400/15 text-ochre-600' : 'bg-majolica-50 text-majolica-600';
   return (
     <div className="rounded-2xl border border-majolica-100 bg-white p-4 shadow-soft">
       <div className="flex items-center gap-2">

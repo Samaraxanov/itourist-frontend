@@ -30,7 +30,7 @@ export default function FirmPublicProfilePage() {
             <div className="flex items-center gap-2">
               <h1 className="font-display text-3xl font-bold text-majolica-900">{firm.name}</h1>
               {firm.status === 'VERIFIED' && (
-                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">✓ {t('verify')}</span>
+                <span className="rounded-full bg-majolica-100 px-2 py-0.5 text-xs font-medium text-majolica-700">✓ {t('verify')}</span>
               )}
             </div>
             {firm.description && <p className="mt-1 text-majolica-600">{pick(firm.description, locale)}</p>}

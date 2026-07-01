@@ -47,7 +47,7 @@ export default function FirmLayout() {
           <div className="truncate text-sm font-semibold text-majolica-900">{user?.firm?.name ?? 'Your firm'}</div>
           <div className="mt-1">
             <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              status === 'VERIFIED' ? 'bg-emerald-100 text-emerald-700' : 'bg-ochre-400/20 text-ochre-600'
+              status === 'VERIFIED' ? 'bg-majolica-100 text-majolica-700' : 'bg-ochre-400/20 text-ochre-600'
             }`}>
               {status === 'VERIFIED' ? `✓ ${t('verify')}` : (status ?? '').toLowerCase()}
             </span>

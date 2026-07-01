@@ -77,7 +77,7 @@ export default function ImageUploader({
         className="hidden"
         onChange={(e) => e.target.files && e.target.files.length > 0 && upload(e.target.files)}
       />
-      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-xs text-ochre-600">{error}</p>}
     </div>
   );
 }

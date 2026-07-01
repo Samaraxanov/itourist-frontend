@@ -58,7 +58,7 @@ export default function AdminPaymentsPage() {
                   <td className="px-4 py-3"><StatusBadge status={p.status} kind="payment" /></td>
                   <td className="px-4 py-3 text-right text-majolica-700">{formatPrice(p.amount, p.currency, locale)}</td>
                   <td className="px-4 py-3 text-right text-ochre-600">{formatPrice(p.commissionAmount, p.currency, locale)}</td>
-                  <td className="px-4 py-3 text-right font-medium text-emerald-700">{formatPrice(p.netAmount, p.currency, locale)}</td>
+                  <td className="px-4 py-3 text-right font-medium text-majolica-700">{formatPrice(p.netAmount, p.currency, locale)}</td>
                 </tr>
               ))}
             </tbody>

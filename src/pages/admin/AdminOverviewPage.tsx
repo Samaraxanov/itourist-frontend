@@ -26,10 +26,10 @@ export default function AdminOverviewPage() {
             <StatCard label={t('firms')} value={`${s.firms.VERIFIED ?? 0}/${Object.values(s.firms).reduce((a, b) => a + (b ?? 0), 0)}`} icon="🏢" hint={`${pendingFirms} ${t('pendingReview').toLowerCase()}`} accent={pendingFirms ? 'ochre' : 'majolica'} />
             <StatCard label={t('totalTours')} value={`${s.tours.published}/${s.tours.total}`} icon="🧭" />
             <StatCard label={t('bookings')} value={Object.values(bk).reduce((a, b) => a + (b ?? 0), 0)} icon="📩" />
-            <StatCard label={t('gross')} value={formatPrice(s.revenue.gross, cur, locale)} icon="💰" accent="emerald" />
+            <StatCard label={t('gross')} value={formatPrice(s.revenue.gross, cur, locale)} icon="💰" accent="ochre" />
             <StatCard label={t('commission')} value={formatPrice(s.revenue.commission, cur, locale)} icon="🏦" accent="ochre" />
             <StatCard label={t('payouts')} value={formatPrice(s.revenue.payouts, cur, locale)} icon="💳" />
-            <StatCard label={t('paid')} value={s.revenue.capturedCount} icon="✓" accent="emerald" />
+            <StatCard label={t('paid')} value={s.revenue.capturedCount} icon="✓" accent="ochre" />
           </div>
 
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
@@ -39,7 +39,7 @@ export default function AdminOverviewPage() {
                 segments={[
                   { label: t('statusREQUESTED'), value: bk.REQUESTED ?? 0, color: 'bg-ochre-400' },
                   { label: t('statusCONFIRMED'), value: bk.CONFIRMED ?? 0, color: 'bg-majolica-500' },
-                  { label: t('statusCOMPLETED'), value: bk.COMPLETED ?? 0, color: 'bg-emerald-500' },
+                  { label: t('statusCOMPLETED'), value: bk.COMPLETED ?? 0, color: 'bg-majolica-700' },
                   { label: t('statusCANCELLED'), value: (bk.CANCELLED ?? 0) + (bk.DECLINED ?? 0), color: 'bg-majolica-200' },
                 ]}
               />
@@ -49,7 +49,7 @@ export default function AdminOverviewPage() {
               <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-majolica-500">{t('firms')}</h3>
               <BreakdownBar
                 segments={[
-                  { label: t('verify'), value: s.firms.VERIFIED ?? 0, color: 'bg-emerald-500' },
+                  { label: t('verify'), value: s.firms.VERIFIED ?? 0, color: 'bg-majolica-700' },
                   { label: t('pendingReview'), value: s.firms.PENDING ?? 0, color: 'bg-ochre-400' },
                   { label: t('suspend'), value: (s.firms.SUSPENDED ?? 0) + (s.firms.REJECTED ?? 0), color: 'bg-majolica-200' },
                 ]}

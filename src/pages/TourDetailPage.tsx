@@ -235,7 +235,7 @@ function BookingForm({ tour }: { tour: TourDetail }) {
       <textarea value={form.note} onChange={(e) => set('note', e.target.value)} rows={2}
         className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder="Note (optional)" />
 
-      {mutation.isError && <p className="text-xs text-red-600">Could not send request. Check the fields.</p>}
+      {mutation.isError && <p className="text-xs text-ochre-600">Could not send request. Check the fields.</p>}
 
       <button
         onClick={() => mutation.mutate()}

@@ -77,7 +77,7 @@ export default function FirmBookingsPage() {
                     <button
                       onClick={() => complete.mutate(b.id)}
                       disabled={complete.isPending}
-                      className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                      className="rounded-lg bg-majolica-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-majolica-700 disabled:opacity-50"
                     >
                       {t('complete')}
                     </button>

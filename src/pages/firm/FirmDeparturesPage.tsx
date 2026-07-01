@@ -93,7 +93,7 @@ export default function FirmDeparturesPage() {
                 <div className="flex items-center gap-2 font-medium text-majolica-900">
                   {formatDate(d.startDate, locale)}
                   {d.status && d.status !== 'OPEN' && <StatusBadge status={d.status === 'CANCELLED' ? 'CANCELLED' : 'CONFIRMED'} />}
-                  {d.instantConfirm && <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700">{t('instant')}</span>}
+                  {d.instantConfirm && <span className="rounded bg-majolica-100 px-1.5 py-0.5 text-xs text-majolica-700">{t('instant')}</span>}
                 </div>
                 <div className="text-sm text-majolica-500">
                   {d.seatsBooked}/{d.capacity} · {d._count?.bookings ?? 0} bookings
