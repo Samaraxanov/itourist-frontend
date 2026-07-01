@@ -7,11 +7,12 @@ export default {
         // iTourist palette: clean blue (primary) + vivid orange (accent) on white.
         // Token names kept (majolica=blue, ochre=orange, sand=near-white surface)
         // so the whole app rebrands from these definitions.
-        // Brand blue scale centered on #0C73FE (rgb 12,115,254) at 500.
+        // Brand blue scale — the exact brand blue #0C73FE (rgb 12,115,254) sits at
+        // 600, which is what primary buttons/links use.
         majolica: {
           50: '#eaf3ff', 100: '#d5e7ff', 200: '#aecfff', 300: '#7db0ff',
-          400: '#4491ff', 500: '#0c73fe', 600: '#0a5ce0', 700: '#0b49b0',
-          800: '#0d3d8f', 900: '#0f3372', 950: '#0a2049',
+          400: '#4491ff', 500: '#2b83fe', 600: '#0c73fe', 700: '#0a5ed6',
+          800: '#0c4ba8', 900: '#0e3b80', 950: '#0a2049',
         },
         // Brand orange scale centered on #FA742D (rgb 250,116,45) at 500.
         ochre: { 300: '#ffb98c', 400: '#fd9a5c', 500: '#fa742d', 600: '#e85e18', 700: '#bf4a12' },
