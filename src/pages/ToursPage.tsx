@@ -41,8 +41,8 @@ export default function ToursPage() {
 
   return (
     <div>
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-majolica-900 text-white">
+      {/* Hero — brand blue #0C73FE */}
+      <section className="relative overflow-hidden bg-majolica-600 text-white">
         <div className="absolute inset-0 bg-hero-grid [background-size:22px_22px] opacity-60" />
         <div className="relative mx-auto max-w-6xl px-4 py-20">
           <span className="inline-block rounded-full bg-white/10 px-3 py-1 text-xs font-medium tracking-wide text-majolica-100">
