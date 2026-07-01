@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 
 // UI strings. Tour *content* is multilingual in the DB; these are chrome labels.
 const uz = {
-  brand: 'Sayohat',
+  brand: 'iTourist',
   tagline: 'Oʻzbekiston boʻylab eng yaxshi turlar — bir joyda',
   search: 'Turlarni qidirish',
   searchPlaceholder: 'Yoʻnalish yoki tur nomi',
@@ -151,7 +151,7 @@ const uz = {
 };
 
 const ru = {
-  brand: 'Sayohat',
+  brand: 'iTourist',
   tagline: 'Лучшие туры по Узбекистану — в одном месте',
   search: 'Поиск туров',
   searchPlaceholder: 'Направление или название тура',
@@ -292,7 +292,7 @@ const ru = {
 };
 
 const en = {
-  brand: 'Sayohat',
+  brand: 'iTourist',
   tagline: 'The best tours across Uzbekistan — in one place',
   search: 'Search tours',
   searchPlaceholder: 'Destination or tour name',

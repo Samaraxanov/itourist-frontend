@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
+import Brand from './Brand';
 import LanguageSwitcher from './LanguageSwitcher';
 import NotificationBell from './NotificationBell';
 
@@ -16,9 +17,7 @@ export default function Layout() {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-20 border-b border-majolica-100 bg-white/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-          <Link to="/" className="font-display text-2xl font-bold text-majolica-700">
-            {t('brand')}
-          </Link>
+          <Link to="/"><Brand /></Link>
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
             {user ? (
@@ -52,7 +51,7 @@ export default function Layout() {
 
       <footer className="mt-16 border-t border-majolica-100 bg-white">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-10 text-center">
-          <div className="font-display text-xl font-bold text-majolica-700">{t('brand')}</div>
+          <Brand className="text-xl" />
           <p className="max-w-md text-sm text-majolica-400">{t('tagline')}</p>
           <p className="mt-2 text-xs text-majolica-300">🇺🇿 Uzbekistan · uz · ru · en</p>
         </div>

@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../lib/auth';
+import Brand from '../Brand';
 import LanguageSwitcher from '../LanguageSwitcher';
 import NotificationBell from '../NotificationBell';
 
@@ -29,7 +30,7 @@ export default function FirmLayout() {
       {/* Sidebar */}
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-majolica-100 bg-white px-4 py-5 md:flex">
         <Link to="/firm" className="px-2">
-          <div className="font-display text-2xl font-bold text-majolica-700">{t('brand')}</div>
+          <Brand />
           <div className="text-xs font-medium uppercase tracking-widest text-ochre-500">Operator</div>
         </Link>
 
@@ -60,7 +61,7 @@ export default function FirmLayout() {
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-majolica-100 bg-white/80 px-4 backdrop-blur md:px-8">
           {/* Mobile brand / nav */}
           <div className="flex items-center gap-3 md:hidden">
-            <Link to="/firm" className="font-display text-xl font-bold text-majolica-700">{t('brand')}</Link>
+            <Link to="/firm"><Brand className="text-xl" /></Link>
           </div>
           <div className="hidden text-sm text-majolica-400 md:block">{t('dashboard')}</div>
           <div className="flex items-center gap-3">

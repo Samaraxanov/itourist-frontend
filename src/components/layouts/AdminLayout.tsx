@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../lib/auth';
+import Brand from '../Brand';
 import LanguageSwitcher from '../LanguageSwitcher';
 import NotificationBell from '../NotificationBell';
 
@@ -27,7 +28,7 @@ export default function AdminLayout() {
       {/* Dark sidebar */}
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-majolica-950 px-4 py-5 text-white md:flex">
         <Link to="/admin" className="px-2">
-          <div className="font-display text-2xl font-bold text-white">{t('brand')}</div>
+          <Brand tone="dark" />
           <div className="text-xs font-medium uppercase tracking-widest text-ochre-400">Platform admin</div>
         </Link>
 
@@ -47,7 +48,7 @@ export default function AdminLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-majolica-100 bg-white/80 px-4 backdrop-blur md:px-8">
           <div className="flex items-center gap-3">
-            <Link to="/admin" className="font-display text-xl font-bold text-majolica-700 md:hidden">{t('brand')}</Link>
+            <Link to="/admin" className="md:hidden"><Brand className="text-xl" /></Link>
             <span className="hidden text-sm text-majolica-400 md:block">{t('admin')}</span>
           </div>
           <div className="flex items-center gap-3">
