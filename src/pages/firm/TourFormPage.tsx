@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../../lib/api';
-import type { Locale, Lookup, Multilingual } from '../../types';
+import ImageUploader from '../../components/ImageUploader';
+import type { Locale, Lookup, Multilingual, TourCard } from '../../types';
 
 interface FormState {
   title: Multilingual;
@@ -12,28 +13,54 @@ interface FormState {
   priceFrom: number;
   currency: 'UZS' | 'USD' | 'EUR';
   durationDays: number;
+  maxGroupSize: string;
   regionId: string;
   categoryId: string;
   languages: Locale[];
-  images: string; // newline-separated URLs in the form; split on submit
+  images: string[];
 }
 
 const empty: FormState = {
   title: {}, summary: {}, description: {},
-  priceFrom: 0, currency: 'UZS', durationDays: 1,
-  regionId: '', categoryId: '', languages: ['uz', 'ru', 'en'], images: '',
+  priceFrom: 0, currency: 'UZS', durationDays: 1, maxGroupSize: '',
+  regionId: '', categoryId: '', languages: ['uz', 'ru', 'en'], images: [],
 };
 
 export default function TourFormPage() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const isEdit = id && id !== 'new';
+  const isEdit = Boolean(id && id !== 'new');
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(empty);
   const [error, setError] = useState('');
 
   const regions = useQuery({ queryKey: ['regions'], queryFn: () => apiRequest<Lookup[]>('/meta/regions') });
   const categories = useQuery({ queryKey: ['categories'], queryFn: () => apiRequest<Lookup[]>('/meta/categories') });
+
+  // Prefill on edit by finding the tour in the firm's own list (covers drafts too).
+  const mine = useQuery({
+    queryKey: ['firm-tours'],
+    queryFn: () => apiRequest<(TourCard & { description?: Multilingual; maxGroupSize?: number | null })[]>('/tours/mine', { auth: true }),
+    enabled: isEdit,
+  });
+  useEffect(() => {
+    if (!isEdit || !mine.data) return;
+    const tour = mine.data.find((x) => x.id === id);
+    if (!tour) return;
+    setForm({
+      title: tour.title ?? {},
+      summary: tour.summary ?? {},
+      description: tour.description ?? {},
+      priceFrom: tour.priceFrom,
+      currency: tour.currency,
+      durationDays: tour.durationDays,
+      maxGroupSize: tour.maxGroupSize ? String(tour.maxGroupSize) : '',
+      regionId: tour.region?.id ?? '',
+      categoryId: tour.category?.id ?? '',
+      languages: tour.languages ?? ['uz', 'ru', 'en'],
+      images: tour.images ?? [],
+    });
+  }, [isEdit, mine.data, id]);
 
   const save = useMutation({
     mutationFn: () => {
@@ -44,10 +71,11 @@ export default function TourFormPage() {
         priceFrom: form.priceFrom,
         currency: form.currency,
         durationDays: form.durationDays,
+        maxGroupSize: form.maxGroupSize ? Number(form.maxGroupSize) : undefined,
         regionId: form.regionId || undefined,
         categoryId: form.categoryId || undefined,
         languages: form.languages,
-        images: form.images.split('\n').map((s) => s.trim()).filter(Boolean),
+        images: form.images,
       };
       return isEdit
         ? apiRequest(`/tours/${id}`, { method: 'PATCH', auth: true, body: payload })
@@ -64,12 +92,14 @@ export default function TourFormPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="font-display text-2xl font-bold text-majolica-900 mb-6">
-        {isEdit ? 'Edit tour' : t('addTour')}
-      </h1>
+      <div className="mb-6 flex items-center gap-4">
+        <h1 className="font-display text-2xl font-bold text-majolica-900">
+          {isEdit ? t('editTour') : t('addTour')}
+        </h1>
+        <Link to="/firm" className="text-sm text-majolica-600 hover:underline">← {t('dashboard')}</Link>
+      </div>
 
       <div className="space-y-6">
-        {/* Multilingual title */}
         <fieldset>
           <legend className="text-sm font-medium text-majolica-700 mb-2">Title</legend>
           {langs.map((l) => (
@@ -84,6 +114,15 @@ export default function TourFormPage() {
           {langs.map((l) => (
             <input key={l} placeholder={`Summary (${l.toUpperCase()})`} value={form.summary[l] ?? ''}
               onChange={(e) => setML('summary', l, e.target.value)}
+              className="mb-2 w-full rounded-lg border border-majolica-200 px-3 py-2" />
+          ))}
+        </fieldset>
+
+        <fieldset>
+          <legend className="text-sm font-medium text-majolica-700 mb-2">Description</legend>
+          {langs.map((l) => (
+            <textarea key={l} rows={2} placeholder={`Description (${l.toUpperCase()})`} value={form.description[l] ?? ''}
+              onChange={(e) => setML('description', l, e.target.value)}
               className="mb-2 w-full rounded-lg border border-majolica-200 px-3 py-2" />
           ))}
         </fieldset>
@@ -109,6 +148,12 @@ export default function TourFormPage() {
               onChange={(e) => setForm((f) => ({ ...f, durationDays: Number(e.target.value) }))}
               className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
           </label>
+          <label className="text-sm text-majolica-700">
+            Max group size
+            <input type="number" min={1} value={form.maxGroupSize}
+              onChange={(e) => setForm((f) => ({ ...f, maxGroupSize: e.target.value }))}
+              className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" placeholder="—" />
+          </label>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -130,12 +175,12 @@ export default function TourFormPage() {
           </label>
         </div>
 
-        <label className="block text-sm text-majolica-700">
-          Image URLs (one per line)
-          <textarea rows={3} value={form.images}
-            onChange={(e) => setForm((f) => ({ ...f, images: e.target.value }))}
-            className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2 font-mono text-xs" />
-        </label>
+        <div>
+          <span className="text-sm font-medium text-majolica-700">{t('images')}</span>
+          <div className="mt-2">
+            <ImageUploader images={form.images} onChange={(images) => setForm((f) => ({ ...f, images }))} />
+          </div>
+        </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

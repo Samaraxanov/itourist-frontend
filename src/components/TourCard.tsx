@@ -29,6 +29,11 @@ export default function TourCard({ tour }: { tour: TourCardType }) {
             {pick(tour.region.name, locale)}
           </span>
         )}
+        {tour.featured && (
+          <span className="absolute right-3 top-3 rounded-full bg-ochre-500 px-2.5 py-1 text-xs font-semibold text-white">
+            ★ {t('featured')}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-4">

@@ -1,11 +1,12 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { apiRequest } from '../lib/api';
 import { useAuth } from '../lib/auth';
-import { t as pick, formatPrice, durationLabel } from '../lib/format';
-import type { Locale, Multilingual } from '../types';
+import { t as pick, formatPrice, formatDate, durationLabel } from '../lib/format';
+import StarRating from '../components/StarRating';
+import type { Departure, Locale, Multilingual, Review } from '../types';
 
 interface TourDetail {
   id: string;
@@ -22,7 +23,8 @@ interface TourDetail {
   images: string[];
   region?: { name: Multilingual } | null;
   firm?: { id: string; name: string; slug: string; phone?: string | null } | null;
-  reviews: { id: string; rating: number; comment?: string; user: { firstName?: string | null } }[];
+  departures: Departure[];
+  reviews: Review[];
 }
 
 export default function TourDetailPage() {
@@ -38,7 +40,7 @@ export default function TourDetailPage() {
     enabled: !!slug,
   });
 
-  if (isLoading) return <div className="mx-auto max-w-4xl px-4 py-16 text-majolica-400">Loading…</div>;
+  if (isLoading) return <div className="mx-auto max-w-4xl px-4 py-16 text-majolica-400">{t('loading')}</div>;
   if (!tour) return <div className="mx-auto max-w-4xl px-4 py-16">Tour not found.</div>;
 
   return (
@@ -67,11 +69,11 @@ export default function TourDetailPage() {
           )}
 
           {tour.firm && (
-            <div className="mt-8 rounded-xl border border-majolica-100 bg-white p-4">
+            <Link to={`/firms/${tour.firm.slug}`} className="mt-8 block rounded-xl border border-majolica-100 bg-white p-4 hover:border-majolica-300">
               <div className="text-xs text-majolica-400">Tour operator</div>
               <div className="font-semibold text-majolica-900">{tour.firm.name}</div>
               {tour.firm.phone && <div className="text-sm text-majolica-600">{tour.firm.phone}</div>}
-            </div>
+            </Link>
           )}
 
           {tour.reviews.length > 0 && (
@@ -80,9 +82,14 @@ export default function TourDetailPage() {
               <div className="space-y-3">
                 {tour.reviews.map((r) => (
                   <div key={r.id} className="rounded-lg border border-majolica-100 bg-white p-3">
-                    <div className="text-ochre-600 text-sm">{'★'.repeat(r.rating)}</div>
+                    <StarRating value={r.rating} />
                     {r.comment && <p className="text-sm text-majolica-700 mt-1">{r.comment}</p>}
                     <div className="text-xs text-majolica-400 mt-1">{r.user.firstName ?? 'Traveller'}</div>
+                    {r.firmReply && (
+                      <div className="mt-2 rounded bg-majolica-50 p-2 text-sm text-majolica-600">
+                        <span className="font-medium">{t('reviewFirmReply')}: </span>{r.firmReply}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -97,10 +104,12 @@ export default function TourDetailPage() {
             <div className="font-display text-2xl font-bold text-majolica-900">
               {formatPrice(tour.priceFrom, tour.currency, locale)}
             </div>
-            <p className="mt-1 text-xs text-majolica-400">per person</p>
+            <p className="mt-1 text-xs text-majolica-400">{t('perPerson')}</p>
 
-            {user ? (
-              <BookingForm tourId={tour.id} maxGroup={tour.maxGroupSize} />
+            {user && user.role !== 'USER' ? (
+              <p className="mt-4 text-sm text-majolica-400">Log in as a traveller to book.</p>
+            ) : user ? (
+              <BookingForm tour={tour} />
             ) : (
               <button
                 onClick={() => navigate('/login')}
@@ -116,9 +125,13 @@ export default function TourDetailPage() {
   );
 }
 
-function BookingForm({ tourId, maxGroup }: { tourId: string; maxGroup?: number | null }) {
-  const { t } = useTranslation();
+function BookingForm({ tour }: { tour: TourDetail }) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language as Locale;
   const { user } = useAuth();
+  const departures = tour.departures ?? [];
+
+  const [departureId, setDepartureId] = useState<string>(departures[0]?.id ?? '');
   const [form, setForm] = useState({
     startDate: '',
     peopleCount: 1,
@@ -128,32 +141,66 @@ function BookingForm({ tourId, maxGroup }: { tourId: string; maxGroup?: number |
     note: '',
   });
 
+  const usingOpenDate = departureId === '';
+
   const mutation = useMutation({
     mutationFn: () =>
       apiRequest('/bookings', {
         method: 'POST',
         auth: true,
-        body: { tourId, ...form, startDate: new Date(form.startDate).toISOString() },
+        body: {
+          tourId: tour.id,
+          ...(usingOpenDate
+            ? { startDate: new Date(form.startDate).toISOString() }
+            : { departureId }),
+          peopleCount: form.peopleCount,
+          contactName: form.contactName,
+          contactPhone: form.contactPhone,
+          contactEmail: form.contactEmail,
+          note: form.note || undefined,
+        },
       }),
   });
 
   if (mutation.isSuccess) {
     return (
       <div className="mt-4 rounded-lg bg-majolica-50 p-4 text-sm text-majolica-700">
-        Request sent. The tour operator will confirm your booking soon.
+        {t('requestSent')}
       </div>
     );
   }
 
   const set = (k: keyof typeof form, v: string | number) => setForm((f) => ({ ...f, [k]: v }));
+  const selectedDep = departures.find((d) => d.id === departureId);
+  const maxSeats = selectedDep ? selectedDep.capacity - selectedDep.seatsBooked : tour.maxGroupSize ?? 50;
 
   return (
     <div className="mt-4 space-y-2">
-      <input type="date" value={form.startDate} onChange={(e) => set('startDate', e.target.value)}
-        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" />
-      <input type="number" min={1} max={maxGroup ?? 50} value={form.peopleCount}
+      {departures.length > 0 && (
+        <select
+          value={departureId}
+          onChange={(e) => setDepartureId(e.target.value)}
+          className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm"
+          aria-label={t('selectDeparture')}
+        >
+          {departures.map((d) => (
+            <option key={d.id} value={d.id}>
+              {formatDate(d.startDate, locale)} — {t('seatsLeft', { n: d.capacity - d.seatsBooked })}
+              {d.instantConfirm ? ` · ${t('instant')}` : ''}
+            </option>
+          ))}
+          <option value="">{t('openDate')}</option>
+        </select>
+      )}
+
+      {usingOpenDate && (
+        <input type="date" value={form.startDate} onChange={(e) => set('startDate', e.target.value)}
+          className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" />
+      )}
+
+      <input type="number" min={1} max={maxSeats} value={form.peopleCount}
         onChange={(e) => set('peopleCount', Number(e.target.value))}
-        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder="People" />
+        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder={t('people')} />
       <input value={form.contactName} onChange={(e) => set('contactName', e.target.value)}
         className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder="Full name" />
       <input value={form.contactPhone} onChange={(e) => set('contactPhone', e.target.value)}
@@ -165,7 +212,7 @@ function BookingForm({ tourId, maxGroup }: { tourId: string; maxGroup?: number |
 
       <button
         onClick={() => mutation.mutate()}
-        disabled={mutation.isPending || !form.startDate || !form.contactName || !form.contactPhone}
+        disabled={mutation.isPending || (usingOpenDate && !form.startDate) || !form.contactName || !form.contactPhone}
         className="w-full rounded-lg bg-ochre-500 py-3 font-semibold text-white hover:bg-ochre-600 disabled:opacity-50"
       >
         {t('book')}

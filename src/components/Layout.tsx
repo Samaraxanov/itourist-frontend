@@ -2,6 +2,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import type { Locale } from '../types';
+import NotificationBell from './NotificationBell';
 
 function LanguageSwitcher() {
   const { i18n } = useTranslation();
@@ -32,9 +33,11 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const linkCls = 'text-sm font-medium text-majolica-700 hover:text-majolica-900';
+
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-majolica-100 bg-white/80 backdrop-blur sticky top-0 z-10">
+      <header className="border-b border-majolica-100 bg-white/80 backdrop-blur sticky top-0 z-20">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between gap-4">
           <Link to="/" className="font-display text-2xl font-bold text-majolica-700">
             {t('brand')}
@@ -43,11 +46,16 @@ export default function Layout() {
             <LanguageSwitcher />
             {user ? (
               <>
-                {user.role === 'FIRM' && (
-                  <Link to="/firm" className="text-sm font-medium text-majolica-700 hover:text-majolica-900">
-                    {t('dashboard')}
-                  </Link>
+                {user.role === 'USER' && (
+                  <Link to="/bookings" className={linkCls}>{t('myBookings')}</Link>
                 )}
+                {user.role === 'FIRM' && (
+                  <Link to="/firm" className={linkCls}>{t('dashboard')}</Link>
+                )}
+                {user.role === 'ADMIN' && (
+                  <Link to="/admin" className={linkCls}>{t('admin')}</Link>
+                )}
+                <NotificationBell />
                 <button
                   onClick={async () => {
                     await logout();
@@ -60,9 +68,7 @@ export default function Layout() {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-sm font-medium text-majolica-700 hover:text-majolica-900">
-                  {t('login')}
-                </Link>
+                <Link to="/login" className={linkCls}>{t('login')}</Link>
                 <Link
                   to="/register"
                   className="rounded-lg bg-ochre-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-ochre-600"
