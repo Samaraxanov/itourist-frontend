@@ -21,12 +21,13 @@ interface FormState {
   categoryId: string;
   languages: Locale[];
   images: string[];
+  startDate: string; // optional first departure date
 }
 
 const empty: FormState = {
   title: {}, summary: {}, description: {},
   priceFrom: 0, currency: 'UZS', durationDays: 1, maxGroupSize: '',
-  regionId: '', categoryId: '', languages: ['uz', 'ru', 'en'], images: [],
+  regionId: '', categoryId: '', languages: ['uz', 'ru', 'en'], images: [], startDate: '',
 };
 
 export default function TourFormPage() {
@@ -64,11 +65,12 @@ export default function TourFormPage() {
       categoryId: tour.category?.id ?? '',
       languages: tour.languages ?? ['uz', 'ru', 'en'],
       images: tour.images ?? [],
+      startDate: '', // departures are managed separately; keep the field empty on edit
     });
   }, [isEdit, mine.data, id]);
 
   const save = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       const payload = {
         title: form.title,
         summary: form.summary,
@@ -82,9 +84,23 @@ export default function TourFormPage() {
         languages: form.languages,
         images: form.images,
       };
-      return isEdit
-        ? apiRequest(`/tours/${id}`, { method: 'PATCH', auth: true, body: payload })
-        : apiRequest('/tours', { method: 'POST', auth: true, body: payload });
+      const tour = isEdit
+        ? await apiRequest<{ id: string }>(`/tours/${id}`, { method: 'PATCH', auth: true, body: payload })
+        : await apiRequest<{ id: string }>('/tours', { method: 'POST', auth: true, body: payload });
+
+      // If a date was provided, open an initial departure for it.
+      if (form.startDate) {
+        await apiRequest('/departures', {
+          method: 'POST',
+          auth: true,
+          body: {
+            tourId: tour.id,
+            startDate: new Date(form.startDate).toISOString(),
+            capacity: form.maxGroupSize ? Number(form.maxGroupSize) : 10,
+          },
+        });
+      }
+      return tour;
     },
     onSuccess: () => navigate('/firm'),
     onError: (e: Error) => setError(e.message),
@@ -197,6 +213,16 @@ export default function TourFormPage() {
               </select>
             </label>
           </div>
+
+          <label className="block text-sm text-majolica-700">
+            {t('startDate')} <span className="font-normal text-majolica-400">— {t('departures').toLowerCase()}</span>
+            <input type="date" value={form.startDate}
+              onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
+              className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
+            <span className="mt-1 block text-xs text-majolica-400">
+              {t('addDeparture')} — {t('manageDepartures').toLowerCase()}.
+            </span>
+          </label>
 
           <div>
             <span className="text-sm font-medium text-majolica-700">{t('images')}</span>
