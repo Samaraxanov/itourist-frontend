@@ -14,6 +14,7 @@ export default function AdminFirmsPage() {
   const locale = i18n.language as Locale;
   const qc = useQueryClient();
   const [filter, setFilter] = useState<FirmStatus | 'ALL'>('ALL');
+  const [adding, setAdding] = useState(false);
 
   const { data: firms, isLoading } = useQuery({
     queryKey: ['admin-firms'],
@@ -33,7 +34,20 @@ export default function AdminFirmsPage() {
 
   return (
     <div>
-      <PageHeader title={t('verificationQueue')} subtitle={`${firms?.length ?? 0} ${t('firms').toLowerCase()}`} />
+      <PageHeader
+        title={t('verificationQueue')}
+        subtitle={`${firms?.length ?? 0} ${t('firms').toLowerCase()}`}
+        actions={
+          <button
+            onClick={() => setAdding((v) => !v)}
+            className="rounded-lg bg-ochre-500 px-4 py-2 text-sm font-semibold text-white hover:bg-ochre-600"
+          >
+            {adding ? t('cancel') : `+ ${t('addFirm')}`}
+          </button>
+        }
+      />
+
+      {adding && <AddFirmForm onDone={() => setAdding(false)} />}
 
       <div className="mb-4 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
@@ -89,5 +103,99 @@ export default function AdminFirmsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function AddFirmForm({ onDone }: { onDone: () => void }) {
+  const { t } = useTranslation();
+  const qc = useQueryClient();
+  const [form, setForm] = useState({ email: '', firmName: '', password: '', phone: '', licenseNo: '', status: 'VERIFIED' as 'VERIFIED' | 'PENDING' });
+  const [created, setCreated] = useState<{ email: string; tempPassword?: string } | null>(null);
+
+  const create = useMutation({
+    mutationFn: () =>
+      apiRequest<{ firm: { id: string }; tempPassword?: string }>('/admin/firms', {
+        method: 'POST',
+        auth: true,
+        body: {
+          email: form.email,
+          firmName: form.firmName,
+          password: form.password || undefined,
+          phone: form.phone || undefined,
+          licenseNo: form.licenseNo || undefined,
+          status: form.status,
+        },
+      }),
+    onSuccess: (res) => {
+      setCreated({ email: form.email, tempPassword: res.tempPassword });
+      setForm({ email: '', firmName: '', password: '', phone: '', licenseNo: '', status: 'VERIFIED' });
+      qc.invalidateQueries({ queryKey: ['admin-firms'] });
+      qc.invalidateQueries({ queryKey: ['admin-stats'] });
+    },
+  });
+
+  const set = (patch: Partial<typeof form>) => setForm((f) => ({ ...f, ...patch }));
+  const input = 'w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm';
+
+  return (
+    <Card className="mb-5 p-5">
+      {created && (
+        <div className="mb-4 rounded-lg bg-majolica-50 p-3 text-sm">
+          <div className="font-medium text-majolica-900">{t('firmCreated')}</div>
+          <div className="mt-1 text-majolica-700">{t('email')}: <span className="font-mono">{created.email}</span></div>
+          {created.tempPassword && (
+            <div className="text-majolica-700">
+              {t('tempPasswordLabel')}: <span className="font-mono font-semibold text-ochre-600">{created.tempPassword}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="text-sm text-majolica-700">
+          {t('firmName')}
+          <input value={form.firmName} onChange={(e) => set({ firmName: e.target.value })} className={`mt-1 ${input}`} />
+        </label>
+        <label className="text-sm text-majolica-700">
+          {t('ownerEmail')}
+          <input type="email" value={form.email} onChange={(e) => set({ email: e.target.value })} className={`mt-1 ${input}`} />
+        </label>
+        <label className="text-sm text-majolica-700">
+          {t('password')} <span className="font-normal text-majolica-400">({t('optional').replace('.', '')})</span>
+          <input type="text" value={form.password} onChange={(e) => set({ password: e.target.value })}
+            placeholder={t('autoPasswordHint')} className={`mt-1 ${input}`} />
+        </label>
+        <label className="text-sm text-majolica-700">
+          {t('phoneField')}
+          <input value={form.phone} onChange={(e) => set({ phone: e.target.value })} className={`mt-1 ${input}`} />
+        </label>
+        <label className="text-sm text-majolica-700">
+          {t('licenseNoField')}
+          <input value={form.licenseNo} onChange={(e) => set({ licenseNo: e.target.value })} className={`mt-1 ${input}`} />
+        </label>
+        <label className="text-sm text-majolica-700">
+          {t('status')}
+          <select value={form.status} onChange={(e) => set({ status: e.target.value as 'VERIFIED' | 'PENDING' })} className={`mt-1 ${input}`}>
+            <option value="VERIFIED">VERIFIED</option>
+            <option value="PENDING">PENDING</option>
+          </select>
+        </label>
+      </div>
+
+      {create.isError && <p className="mt-3 text-sm text-ochre-600">{(create.error as Error).message}</p>}
+
+      <div className="mt-4 flex gap-2">
+        <button
+          onClick={() => create.mutate()}
+          disabled={create.isPending || !form.email || form.firmName.length < 2}
+          className="rounded-lg bg-majolica-600 px-5 py-2 text-sm font-semibold text-white hover:bg-majolica-700 disabled:opacity-50"
+        >
+          {t('create')}
+        </button>
+        <button onClick={onDone} className="rounded-lg px-4 py-2 text-sm text-majolica-500 hover:bg-majolica-50">
+          {t('cancel')}
+        </button>
+      </div>
+    </Card>
   );
 }

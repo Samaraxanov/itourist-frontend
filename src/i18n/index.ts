@@ -189,6 +189,12 @@ const uz = {
   tourFirm: 'Tur / Firma',
   operatorTag: 'Operator',
   platformAdmin: 'Platforma admini',
+  addFirm: 'Firma qoʻshish',
+  ownerEmail: 'Egasi emaili',
+  create: 'Yaratish',
+  autoPasswordHint: 'Boʻsh qoldiring — parol avtomatik yaratiladi',
+  firmCreated: 'Firma yaratildi — ushbu maʼlumotlarni ulashing:',
+  tempPasswordLabel: 'Vaqtinchalik parol',
 };
 
 const ru = {
@@ -368,6 +374,12 @@ const ru = {
   tourFirm: 'Тур / Фирма',
   operatorTag: 'Оператор',
   platformAdmin: 'Админ платформы',
+  addFirm: 'Добавить фирму',
+  ownerEmail: 'Email владельца',
+  create: 'Создать',
+  autoPasswordHint: 'Оставьте пустым — пароль сгенерируется',
+  firmCreated: 'Фирма создана — передайте эти данные:',
+  tempPasswordLabel: 'Временный пароль',
 };
 
 const en = {
@@ -547,6 +559,12 @@ const en = {
   tourFirm: 'Tour / Firm',
   operatorTag: 'Operator',
   platformAdmin: 'Platform admin',
+  addFirm: 'Add firm',
+  ownerEmail: 'Owner email',
+  create: 'Create',
+  autoPasswordHint: 'Leave blank to auto-generate a password',
+  firmCreated: 'Firm created — share these credentials:',
+  tempPasswordLabel: 'Temporary password',
 };
 
 i18n.use(initReactI18next).init({
