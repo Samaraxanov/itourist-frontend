@@ -22,9 +22,10 @@ export default function ProfileMenu() {
     : user.role === 'FIRM' ? { to: '/firm', label: t('dashboard') }
     : { to: '/bookings', label: t('myBookings') };
 
+  const photo = user.firm?.logoUrl || user.telegramPhotoUrl;
   const Avatar = ({ size }: { size: string }) =>
-    user.firm?.logoUrl ? (
-      <img src={user.firm.logoUrl} alt="" className={`${size} shrink-0 rounded-full border border-majolica-100 object-cover`} />
+    photo ? (
+      <img src={photo} alt="" className={`${size} shrink-0 rounded-full border border-majolica-100 object-cover`} />
     ) : (
       <span className={`${size} flex shrink-0 items-center justify-center rounded-full bg-majolica-600 text-sm font-semibold text-white`}>
         {initial}

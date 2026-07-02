@@ -1,9 +1,11 @@
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Layout from './components/Layout';
 import FirmLayout from './components/layouts/FirmLayout';
 import AdminLayout from './components/layouts/AdminLayout';
 import { useAuth } from './lib/auth';
+import { isTelegram } from './lib/telegram';
 import type { Role } from './types';
 
 import ToursPage from './pages/ToursPage';
@@ -12,6 +14,7 @@ import FirmPublicProfilePage from './pages/FirmPublicProfilePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MyBookingsPage from './pages/MyBookingsPage';
+import FirmRegisterPage from './pages/FirmRegisterPage';
 import AdminOverviewPage from './pages/admin/AdminOverviewPage';
 import AdminFirmsPage from './pages/admin/AdminFirmsPage';
 import AdminToursPage from './pages/admin/AdminToursPage';
@@ -33,7 +36,20 @@ function RoleGuard({ role }: { role?: Role }) {
   return <Outlet />;
 }
 
+// Inside Telegram, the app is the firm/admin console — route the signed-in user
+// straight to their area instead of the public marketplace landing.
+function useTelegramHomeRedirect() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (!isTelegram() || loading || !user || pathname !== '/') return;
+    navigate(user.role === 'ADMIN' ? '/admin' : user.role === 'FIRM' ? '/firm' : '/firm/register', { replace: true });
+  }, [user, loading, pathname, navigate]);
+}
+
 export default function App() {
+  useTelegramHomeRedirect();
   return (
     <Routes>
       {/* Public + traveller — marketplace layout */}
@@ -45,6 +61,10 @@ export default function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route element={<RoleGuard role="USER" />}>
           <Route path="/bookings" element={<MyBookingsPage />} />
+        </Route>
+        {/* Any authenticated user can become a firm (Telegram onboarding) */}
+        <Route element={<RoleGuard />}>
+          <Route path="/firm/register" element={<FirmRegisterPage />} />
         </Route>
       </Route>
 

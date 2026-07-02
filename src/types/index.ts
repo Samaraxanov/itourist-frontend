@@ -10,6 +10,7 @@ export interface AuthUser {
   firstName?: string | null;
   lastName?: string | null;
   locale: Locale;
+  telegramPhotoUrl?: string | null;
   firm?: { id: string; name: string; slug: string; status: string; logoUrl?: string | null } | null;
 }
 
