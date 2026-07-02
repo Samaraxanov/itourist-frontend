@@ -22,13 +22,23 @@ interface FormState {
   languages: Locale[];
   images: string[];
   startDate: string; // optional first departure date
+  endDate: string; // used when durationDays > 1
 }
 
 const empty: FormState = {
   title: {}, summary: {}, description: {},
   priceFrom: 0, currency: 'UZS', durationDays: 1, maxGroupSize: '',
-  regionId: '', categoryId: '', languages: ['uz', 'ru', 'en'], images: [], startDate: '',
+  regionId: '', categoryId: '', languages: ['uz', 'ru', 'en'], images: [], startDate: '', endDate: '',
 };
+
+// Add n days to a YYYY-MM-DD string, returning YYYY-MM-DD (local, no TZ drift).
+function addDays(dateStr: string, n: number): string {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  const pad = (x: number) => String(x).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
 
 export default function TourFormPage() {
   const { t, i18n } = useTranslation();
@@ -66,6 +76,7 @@ export default function TourFormPage() {
       languages: tour.languages ?? ['uz', 'ru', 'en'],
       images: tour.images ?? [],
       startDate: '', // departures are managed separately; keep the field empty on edit
+      endDate: '',
     });
   }, [isEdit, mine.data, id]);
 
@@ -88,14 +99,17 @@ export default function TourFormPage() {
         ? await apiRequest<{ id: string }>(`/tours/${id}`, { method: 'PATCH', auth: true, body: payload })
         : await apiRequest<{ id: string }>('/tours', { method: 'POST', auth: true, body: payload });
 
-      // If a date was provided, open an initial departure for it.
+      // If a date was provided, open an initial departure for it. Multi-day tours
+      // also carry an end date.
       if (form.startDate) {
+        const multiDay = form.durationDays > 1;
         await apiRequest('/departures', {
           method: 'POST',
           auth: true,
           body: {
             tourId: tour.id,
             startDate: new Date(form.startDate).toISOString(),
+            ...(multiDay && form.endDate ? { endDate: new Date(form.endDate).toISOString() } : {}),
             capacity: form.maxGroupSize ? Number(form.maxGroupSize) : 10,
           },
         });
@@ -184,7 +198,15 @@ export default function TourFormPage() {
             <label className="text-sm text-majolica-700">
               Duration (days)
               <input type="number" min={1} value={form.durationDays}
-                onChange={(e) => setForm((f) => ({ ...f, durationDays: Number(e.target.value) }))}
+                onChange={(e) => {
+                  const days = Math.max(1, Number(e.target.value));
+                  setForm((f) => ({
+                    ...f,
+                    durationDays: days,
+                    // Keep the end date consistent with the new duration.
+                    endDate: days > 1 && f.startDate ? addDays(f.startDate, days - 1) : '',
+                  }));
+                }}
                 className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
             </label>
             <label className="text-sm text-majolica-700">
@@ -214,15 +236,39 @@ export default function TourFormPage() {
             </label>
           </div>
 
-          <label className="block text-sm text-majolica-700">
-            {t('startDate')} <span className="font-normal text-majolica-400">— {t('departures').toLowerCase()}</span>
-            <input type="date" value={form.startDate}
-              onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
-              className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
+          <div>
+            <span className="text-sm font-medium text-majolica-700">{t('departures')}</span>
+            <div className={`mt-2 grid gap-3 ${form.durationDays > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+              <label className="text-sm text-majolica-700">
+                {t('startDate')}
+                <input type="date" value={form.startDate}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setForm((f) => ({
+                      ...f,
+                      startDate: v,
+                      // Auto-fill end date from duration for multi-day tours.
+                      endDate: f.durationDays > 1 && v ? addDays(v, f.durationDays - 1) : '',
+                    }));
+                  }}
+                  className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
+              </label>
+              {form.durationDays > 1 && (
+                <label className="text-sm text-majolica-700">
+                  End date
+                  <input type="date" value={form.endDate} min={form.startDate || undefined}
+                    onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))}
+                    className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
+                </label>
+              )}
+            </div>
             <span className="mt-1 block text-xs text-majolica-400">
-              {t('addDeparture')} — {t('manageDepartures').toLowerCase()}.
+              {form.durationDays > 1
+                ? `${form.durationDays}-day tour — end date auto-fills from the start.`
+                : 'Optional.'}{' '}
+              {t('manageDepartures')} → {t('departures')}.
             </span>
-          </label>
+          </div>
 
           <div>
             <span className="text-sm font-medium text-majolica-700">{t('images')}</span>
