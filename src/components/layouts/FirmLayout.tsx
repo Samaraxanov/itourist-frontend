@@ -52,7 +52,7 @@ export default function FirmLayout() {
                 {(user?.firm?.name ?? '?').charAt(0).toUpperCase()}
               </span>
             )}
-            <div className="truncate text-sm font-semibold text-majolica-900">{user?.firm?.name ?? 'Your firm'}</div>
+            <div className="truncate text-sm font-semibold text-majolica-900">{user?.firm?.name ?? t('yourFirm')}</div>
           </div>
           <div className="mt-2">
             <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${

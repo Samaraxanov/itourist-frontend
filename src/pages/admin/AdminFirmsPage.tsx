@@ -55,7 +55,7 @@ export default function AdminFirmsPage() {
             className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
               filter === f ? 'bg-majolica-900 text-white' : 'bg-white text-majolica-600 border border-majolica-100 hover:bg-majolica-50'
             }`}>
-            {f === 'ALL' ? 'All' : f}
+            {f === 'ALL' ? t('all') : f}
           </button>
         ))}
       </div>
@@ -75,7 +75,7 @@ export default function AdminFirmsPage() {
                   <StatusBadge status={f.status} kind="firm" />
                 </div>
                 <div className="text-sm text-majolica-500">
-                  {f.owner.email} · {f._count.tours} tours{f.licenseNo ? ` · lic ${f.licenseNo}` : ''} · {formatDate(f.createdAt, locale)}
+                  {f.owner.email} · {f._count.tours} {t('toursCount')}{f.licenseNo ? ` · ${t('licShort')} ${f.licenseNo}` : ''} · {formatDate(f.createdAt, locale)}
                 </div>
               </div>
               <div className="flex gap-2">

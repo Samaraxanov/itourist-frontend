@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from './components/Layout';
 import FirmLayout from './components/layouts/FirmLayout';
 import AdminLayout from './components/layouts/AdminLayout';
@@ -25,7 +26,8 @@ import TourFormPage from './pages/firm/TourFormPage';
 // routes via <Outlet/> once the session restore settles.
 function RoleGuard({ role }: { role?: Role }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="mx-auto max-w-6xl px-4 py-16 text-majolica-400">Loading…</div>;
+  const { t } = useTranslation();
+  if (loading) return <div className="mx-auto max-w-6xl px-4 py-16 text-majolica-400">{t('loading')}</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (role && user.role !== role) return <Navigate to="/" replace />;
   return <Outlet />;

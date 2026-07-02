@@ -195,6 +195,13 @@ const uz = {
   autoPasswordHint: 'Boʻsh qoldiring — parol avtomatik yaratiladi',
   firmCreated: 'Firma yaratildi — ushbu maʼlumotlarni ulashing:',
   tempPasswordLabel: 'Vaqtinchalik parol',
+  all: 'Barchasi',
+  toursCount: 'tur',
+  licShort: 'lits.',
+  loadError: 'Yuklab boʻlmadi. Qayta urining.',
+  yourFirm: 'Firmangiz',
+  loginFailed: 'Kirishda xatolik',
+  registerFailed: 'Roʻyxatdan oʻtishda xatolik',
 };
 
 const ru = {
@@ -380,6 +387,13 @@ const ru = {
   autoPasswordHint: 'Оставьте пустым — пароль сгенерируется',
   firmCreated: 'Фирма создана — передайте эти данные:',
   tempPasswordLabel: 'Временный пароль',
+  all: 'Все',
+  toursCount: 'туров',
+  licShort: 'лиц.',
+  loadError: 'Не удалось загрузить. Повторите.',
+  yourFirm: 'Ваша фирма',
+  loginFailed: 'Ошибка входа',
+  registerFailed: 'Ошибка регистрации',
 };
 
 const en = {
@@ -565,6 +579,13 @@ const en = {
   autoPasswordHint: 'Leave blank to auto-generate a password',
   firmCreated: 'Firm created — share these credentials:',
   tempPasswordLabel: 'Temporary password',
+  all: 'All',
+  toursCount: 'tours',
+  licShort: 'lic',
+  loadError: 'Couldn’t load. Please retry.',
+  yourFirm: 'Your firm',
+  loginFailed: 'Login failed',
+  registerFailed: 'Registration failed',
 };
 
 i18n.use(initReactI18next).init({

@@ -151,7 +151,7 @@ export default function ToursPage() {
             ))}
           </div>
         ) : isError ? (
-          <p className="py-12 text-center text-majolica-600">Couldn’t load tours. Please retry.</p>
+          <p className="py-12 text-center text-majolica-600">{t('loadError')}</p>
         ) : rest.length > 0 ? (
           <>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

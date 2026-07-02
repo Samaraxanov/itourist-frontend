@@ -20,7 +20,7 @@ export default function LoginPage() {
       await login(email, password);
       navigate('/');
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'Login failed');
+      setError(e instanceof ApiError ? e.message : t('loginFailed'));
     } finally {
       setBusy(false);
     }

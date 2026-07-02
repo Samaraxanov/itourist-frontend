@@ -21,7 +21,7 @@ export default function RegisterPage() {
       await register(form);
       navigate(form.asFirm ? '/firm' : '/');
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'Registration failed');
+      setError(e instanceof ApiError ? e.message : t('registerFailed'));
     } finally {
       setBusy(false);
     }
