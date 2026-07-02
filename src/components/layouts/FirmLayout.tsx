@@ -44,8 +44,17 @@ export default function FirmLayout() {
         </nav>
 
         <div className="mt-auto rounded-xl border border-majolica-100 bg-sand/60 p-3">
-          <div className="truncate text-sm font-semibold text-majolica-900">{user?.firm?.name ?? 'Your firm'}</div>
-          <div className="mt-1">
+          <div className="flex items-center gap-2">
+            {user?.firm?.logoUrl ? (
+              <img src={user.firm.logoUrl} alt="" className="h-8 w-8 shrink-0 rounded-full border border-majolica-100 object-cover" />
+            ) : (
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-majolica-100 text-sm font-semibold text-majolica-600">
+                {(user?.firm?.name ?? '?').charAt(0).toUpperCase()}
+              </span>
+            )}
+            <div className="truncate text-sm font-semibold text-majolica-900">{user?.firm?.name ?? 'Your firm'}</div>
+          </div>
+          <div className="mt-2">
             <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
               status === 'VERIFIED' ? 'bg-majolica-100 text-majolica-700' : 'bg-ochre-400/20 text-ochre-600'
             }`}>
