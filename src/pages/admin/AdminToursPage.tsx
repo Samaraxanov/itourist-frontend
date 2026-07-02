@@ -48,7 +48,7 @@ export default function AdminToursPage() {
                     {tr.featured && <span className="rounded-full bg-ochre-400/20 px-2 py-0.5 text-xs font-medium text-ochre-600">★ {t('featured')}</span>}
                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                       tr.status === 'PUBLISHED' ? 'bg-majolica-100 text-majolica-700' : 'bg-majolica-50 text-majolica-400'
-                    }`}>{tr.status}</span>
+                    }`}>{t(`tour${tr.status}`, { defaultValue: tr.status })}</span>
                   </div>
                   <div className="text-sm text-majolica-500">
                     {tr.firm.name} · {formatPrice(tr.priceFrom, tr.currency, locale)}

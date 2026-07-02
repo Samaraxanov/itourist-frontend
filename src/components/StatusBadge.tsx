@@ -22,10 +22,10 @@ const COLORS: Record<string, string> = {
   FAILED: 'bg-majolica-50 text-majolica-400',
 };
 
-export default function StatusBadge({ status, kind = 'booking' }: { status: string; kind?: 'booking' | 'payment' | 'firm' }) {
+export default function StatusBadge({ status, kind = 'booking' }: { status: string; kind?: 'booking' | 'payment' | 'firm' | 'tour' }) {
   const { t } = useTranslation();
-  const label =
-    kind === 'payment' ? t(`payment${status}`, { defaultValue: status }) : t(`status${status}`, { defaultValue: status });
+  const prefix = kind === 'payment' ? 'payment' : kind === 'firm' ? 'firm' : kind === 'tour' ? 'tour' : 'status';
+  const label = t(`${prefix}${status}`, { defaultValue: status });
   return (
     <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${COLORS[status] ?? 'bg-majolica-50 text-majolica-500'}`}>
       {label}

@@ -202,6 +202,9 @@ const uz = {
   yourFirm: 'Firmangiz',
   loginFailed: 'Kirishda xatolik',
   registerFailed: 'Roʻyxatdan oʻtishda xatolik',
+  firmPENDING: 'Kutilmoqda', firmVERIFIED: 'Tasdiqlangan', firmSUSPENDED: 'Bloklangan', firmREJECTED: 'Rad etilgan',
+  tourDRAFT: 'Qoralama', tourPUBLISHED: 'Chop etilgan', tourUNPUBLISHED: 'Yashirilgan', tourARCHIVED: 'Arxivlangan',
+  notVerifiedBanner: 'Firmangiz holati: {{status}}. Turlarni qoralama sifatida yaratishingiz mumkin, chop etish admin tasdiqlagach ochiladi.',
 };
 
 const ru = {
@@ -394,6 +397,9 @@ const ru = {
   yourFirm: 'Ваша фирма',
   loginFailed: 'Ошибка входа',
   registerFailed: 'Ошибка регистрации',
+  firmPENDING: 'Ожидает', firmVERIFIED: 'Проверена', firmSUSPENDED: 'Заблокирована', firmREJECTED: 'Отклонена',
+  tourDRAFT: 'Черновик', tourPUBLISHED: 'Опубликован', tourUNPUBLISHED: 'Скрыт', tourARCHIVED: 'В архиве',
+  notVerifiedBanner: 'Ваша фирма — {{status}}. Вы можете создавать туры как черновики; публикация откроется после проверки администратором.',
 };
 
 const en = {
@@ -586,6 +592,9 @@ const en = {
   yourFirm: 'Your firm',
   loginFailed: 'Login failed',
   registerFailed: 'Registration failed',
+  firmPENDING: 'Pending', firmVERIFIED: 'Verified', firmSUSPENDED: 'Suspended', firmREJECTED: 'Rejected',
+  tourDRAFT: 'Draft', tourPUBLISHED: 'Published', tourUNPUBLISHED: 'Unpublished', tourARCHIVED: 'Archived',
+  notVerifiedBanner: 'Your firm is {{status}}. You can create tours as drafts, but publishing unlocks once an admin verifies your firm.',
 };
 
 i18n.use(initReactI18next).init({

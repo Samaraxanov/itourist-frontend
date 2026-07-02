@@ -47,8 +47,7 @@ export default function FirmDashboardPage() {
 
       {notVerified && (
         <div className="mb-5 rounded-xl border border-ochre-400 bg-ochre-400/10 p-4 text-sm text-ochre-700">
-          Your firm is <strong>{user?.firm?.status.toLowerCase()}</strong>. You can build tours as drafts, but
-          publishing unlocks once an admin verifies your firm.
+          {t('notVerifiedBanner', { status: user?.firm ? t(`firm${user.firm.status}`) : '' })}
         </div>
       )}
 

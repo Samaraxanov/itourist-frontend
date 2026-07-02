@@ -55,7 +55,7 @@ export default function AdminFirmsPage() {
             className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
               filter === f ? 'bg-majolica-900 text-white' : 'bg-white text-majolica-600 border border-majolica-100 hover:bg-majolica-50'
             }`}>
-            {f === 'ALL' ? t('all') : f}
+            {f === 'ALL' ? t('all') : t(`firm${f}`)}
           </button>
         ))}
       </div>
@@ -176,8 +176,8 @@ function AddFirmForm({ onDone }: { onDone: () => void }) {
         <label className="text-sm text-majolica-700">
           {t('status')}
           <select value={form.status} onChange={(e) => set({ status: e.target.value as 'VERIFIED' | 'PENDING' })} className={`mt-1 ${input}`}>
-            <option value="VERIFIED">VERIFIED</option>
-            <option value="PENDING">PENDING</option>
+            <option value="VERIFIED">{t('firmVERIFIED')}</option>
+            <option value="PENDING">{t('firmPENDING')}</option>
           </select>
         </label>
       </div>

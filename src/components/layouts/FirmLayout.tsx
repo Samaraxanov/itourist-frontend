@@ -58,7 +58,7 @@ export default function FirmLayout() {
             <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
               status === 'VERIFIED' ? 'bg-majolica-100 text-majolica-700' : 'bg-ochre-400/20 text-ochre-600'
             }`}>
-              {status === 'VERIFIED' ? `✓ ${t('verify')}` : (status ?? '').toLowerCase()}
+              {status === 'VERIFIED' ? `✓ ${t('firmVERIFIED')}` : status ? t(`firm${status}`) : ''}
             </span>
           </div>
           <Link to="/" className="mt-3 block text-xs text-majolica-500 hover:underline">← {t('brand')} ↗</Link>
