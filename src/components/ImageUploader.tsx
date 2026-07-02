@@ -47,7 +47,7 @@ export default function ImageUploader({
             <img src={url} alt="" className="h-full w-full object-cover" />
             {i === 0 && (
               <span className="absolute left-1 top-1 rounded bg-majolica-900/80 px-1.5 py-0.5 text-[10px] font-medium text-white">
-                cover
+                {t('cover')}
               </span>
             )}
             <button

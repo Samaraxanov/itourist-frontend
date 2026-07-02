@@ -41,7 +41,7 @@ export default function TourDetailPage() {
   });
 
   if (isLoading) return <div className="mx-auto max-w-4xl px-4 py-16 text-majolica-400">{t('loading')}</div>;
-  if (!tour) return <div className="mx-auto max-w-4xl px-4 py-16">Tour not found.</div>;
+  if (!tour) return <div className="mx-auto max-w-4xl px-4 py-16">{t('tourNotFound')}</div>;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
@@ -69,7 +69,7 @@ export default function TourDetailPage() {
 
           {tour.firm && (
             <Link to={`/firms/${tour.firm.slug}`} className="mt-8 block rounded-xl border border-majolica-100 bg-white p-4 hover:border-majolica-300">
-              <div className="text-xs text-majolica-400">Tour operator</div>
+              <div className="text-xs text-majolica-400">{t('operator')}</div>
               <div className="font-semibold text-majolica-900">{tour.firm.name}</div>
               {tour.firm.phone && <div className="text-sm text-majolica-600">{tour.firm.phone}</div>}
             </Link>
@@ -77,7 +77,7 @@ export default function TourDetailPage() {
 
           {tour.reviews.length > 0 && (
             <div className="mt-8">
-              <h2 className="font-display text-xl font-semibold text-majolica-900 mb-3">Reviews</h2>
+              <h2 className="font-display text-xl font-semibold text-majolica-900 mb-3">{t('reviews')}</h2>
               <div className="space-y-3">
                 {tour.reviews.map((r) => (
                   <div key={r.id} className="rounded-lg border border-majolica-100 bg-white p-3">
@@ -106,7 +106,7 @@ export default function TourDetailPage() {
             <p className="mt-1 text-xs text-majolica-400">{t('perPerson')}</p>
 
             {user && user.role !== 'USER' ? (
-              <p className="mt-4 text-sm text-majolica-400">Log in as a traveller to book.</p>
+              <p className="mt-4 text-sm text-majolica-400">{t('loginToBook')}</p>
             ) : user ? (
               <BookingForm tour={tour} />
             ) : (
@@ -229,13 +229,13 @@ function BookingForm({ tour }: { tour: TourDetail }) {
         onChange={(e) => set('peopleCount', Number(e.target.value))}
         className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder={t('people')} />
       <input value={form.contactName} onChange={(e) => set('contactName', e.target.value)}
-        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder="Full name" />
+        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder={t('fullName')} />
       <input value={form.contactPhone} onChange={(e) => set('contactPhone', e.target.value)}
-        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder="Phone" />
+        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder={t('phoneField')} />
       <textarea value={form.note} onChange={(e) => set('note', e.target.value)} rows={2}
-        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder="Note (optional)" />
+        className="w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm" placeholder={t('noteOptional')} />
 
-      {mutation.isError && <p className="text-xs text-ochre-600">Could not send request. Check the fields.</p>}
+      {mutation.isError && <p className="text-xs text-ochre-600">{t('couldNotSend')}</p>}
 
       <button
         onClick={() => mutation.mutate()}

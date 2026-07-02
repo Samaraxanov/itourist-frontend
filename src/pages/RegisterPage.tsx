@@ -37,7 +37,7 @@ export default function RegisterPage() {
         <input placeholder={t('password')} type="password" value={form.password}
           onChange={(e) => set({ password: e.target.value })}
           className="w-full rounded-lg border border-majolica-200 px-3 py-2.5" />
-        <input placeholder="First name" value={form.firstName}
+        <input placeholder={t('firstName')} value={form.firstName}
           onChange={(e) => set({ firstName: e.target.value })}
           className="w-full rounded-lg border border-majolica-200 px-3 py-2.5" />
 

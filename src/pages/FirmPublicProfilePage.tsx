@@ -18,7 +18,7 @@ export default function FirmPublicProfilePage() {
   });
 
   if (isLoading) return <div className="mx-auto max-w-5xl px-4 py-16 text-majolica-400">{t('loading')}</div>;
-  if (!firm) return <div className="mx-auto max-w-5xl px-4 py-16">Firm not found.</div>;
+  if (!firm) return <div className="mx-auto max-w-5xl px-4 py-16">{t('firmNotFound')}</div>;
 
   return (
     <div>

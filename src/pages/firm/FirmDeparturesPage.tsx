@@ -96,7 +96,7 @@ export default function FirmDeparturesPage() {
                   {d.instantConfirm && <span className="rounded bg-majolica-100 px-1.5 py-0.5 text-xs text-majolica-700">{t('instant')}</span>}
                 </div>
                 <div className="text-sm text-majolica-500">
-                  {d.seatsBooked}/{d.capacity} · {d._count?.bookings ?? 0} bookings
+                  {d.seatsBooked}/{d.capacity} · {d._count?.bookings ?? 0} {t('bookingsCount')}
                 </div>
               </div>
               {d.status !== 'CANCELLED' && (
@@ -112,7 +112,7 @@ export default function FirmDeparturesPage() {
           ))}
         </Card>
       ) : (
-        <EmptyState icon="🗓️" title="No departures yet" hint="Add a date above to open seats." />
+        <EmptyState icon="🗓️" title={t('noDeparturesYet')} hint={t('addDateHint')} />
       )}
     </div>
   );

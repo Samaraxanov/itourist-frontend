@@ -36,7 +36,7 @@ export default function AdminToursPage() {
       {isLoading ? (
         <p className="text-majolica-400">{t('loading')}</p>
       ) : !tours || tours.length === 0 ? (
-        <EmptyState icon="🧭" title="No tours" />
+        <EmptyState icon="🧭" title={t('noToursYet')} />
       ) : (
         <Card className="overflow-hidden">
           <div className="divide-y divide-majolica-100">

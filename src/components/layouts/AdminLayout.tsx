@@ -29,7 +29,7 @@ export default function AdminLayout() {
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-majolica-950 px-4 py-5 text-white md:flex">
         <Link to="/admin" className="px-2">
           <Brand tone="dark" />
-          <div className="text-xs font-medium uppercase tracking-widest text-ochre-400">Platform admin</div>
+          <div className="text-xs font-medium uppercase tracking-widest text-ochre-400">{t('platformAdmin')}</div>
         </Link>
 
         <nav className="mt-8 flex flex-col gap-1">

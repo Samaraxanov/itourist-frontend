@@ -33,14 +33,14 @@ export default function AdminPaymentsPage() {
       {isLoading ? (
         <p className="text-majolica-400">{t('loading')}</p>
       ) : !payments || payments.length === 0 ? (
-        <EmptyState icon="💳" title="No payments yet" />
+        <EmptyState icon="💳" title={t('noPaymentsYet')} />
       ) : (
         <Card className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-majolica-100 text-left text-xs uppercase tracking-wide text-majolica-400">
-                <th className="px-4 py-3 font-medium">Ref</th>
-                <th className="px-4 py-3 font-medium">Tour / Firm</th>
+                <th className="px-4 py-3 font-medium">{t('ref')}</th>
+                <th className="px-4 py-3 font-medium">{t('tourFirm')}</th>
                 <th className="px-4 py-3 font-medium">{t('status')}</th>
                 <th className="px-4 py-3 text-right font-medium">{t('gross')}</th>
                 <th className="px-4 py-3 text-right font-medium">{t('commission')}</th>

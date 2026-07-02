@@ -49,7 +49,7 @@ export default function AdminFirmsPage() {
       {isLoading ? (
         <p className="text-majolica-400">{t('loading')}</p>
       ) : shown.length === 0 ? (
-        <EmptyState icon="🏢" title="No firms" />
+        <EmptyState icon="🏢" title={t('noFirms')} />
       ) : (
         <div className="space-y-3">
           {shown.map((f) => (

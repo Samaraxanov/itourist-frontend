@@ -142,7 +142,7 @@ function ReviewForm({ bookingId, onDone }: { bookingId: string; onDone: () => vo
         placeholder={t('comment')}
         className="mt-2 w-full rounded-lg border border-majolica-200 px-3 py-2 text-sm"
       />
-      {submit.isError && <p className="text-xs text-ochre-600">Could not submit review.</p>}
+      {submit.isError && <p className="text-xs text-ochre-600">{t('couldNotReview')}</p>}
       <div className="mt-2 flex gap-2">
         <button
           onClick={() => submit.mutate()}

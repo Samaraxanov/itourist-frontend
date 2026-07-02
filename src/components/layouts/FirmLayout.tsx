@@ -31,7 +31,7 @@ export default function FirmLayout() {
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-majolica-100 bg-white px-4 py-5 md:flex">
         <Link to="/firm" className="px-2">
           <Brand />
-          <div className="text-xs font-medium uppercase tracking-widest text-ochre-500">Operator</div>
+          <div className="text-xs font-medium uppercase tracking-widest text-ochre-500">{t('operatorTag')}</div>
         </Link>
 
         <nav className="mt-8 flex flex-col gap-1">

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../../lib/api';
+import { t as pick } from '../../lib/format';
 import { useAuth } from '../../lib/auth';
 import ImageUploader from '../../components/ImageUploader';
 import TourCardView from '../../components/TourCard';
@@ -154,27 +155,27 @@ export default function TourFormPage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_340px] lg:items-start">
         <Card className="space-y-6 p-6">
           <fieldset>
-            <legend className="text-sm font-medium text-majolica-700 mb-2">Title</legend>
+            <legend className="text-sm font-medium text-majolica-700 mb-2">{t('titleField')}</legend>
             {langs.map((l) => (
-              <input key={l} placeholder={`Title (${l.toUpperCase()})`} value={form.title[l] ?? ''}
+              <input key={l} placeholder={`${t('titleField')} (${l.toUpperCase()})`} value={form.title[l] ?? ''}
                 onChange={(e) => setML('title', l, e.target.value)}
                 className="mb-2 w-full rounded-lg border border-majolica-200 px-3 py-2" />
             ))}
           </fieldset>
 
           <fieldset>
-            <legend className="text-sm font-medium text-majolica-700 mb-2">Short summary</legend>
+            <legend className="text-sm font-medium text-majolica-700 mb-2">{t('summaryField')}</legend>
             {langs.map((l) => (
-              <input key={l} placeholder={`Summary (${l.toUpperCase()})`} value={form.summary[l] ?? ''}
+              <input key={l} placeholder={`${t('summaryField')} (${l.toUpperCase()})`} value={form.summary[l] ?? ''}
                 onChange={(e) => setML('summary', l, e.target.value)}
                 className="mb-2 w-full rounded-lg border border-majolica-200 px-3 py-2" />
             ))}
           </fieldset>
 
           <fieldset>
-            <legend className="text-sm font-medium text-majolica-700 mb-2">Description</legend>
+            <legend className="text-sm font-medium text-majolica-700 mb-2">{t('descriptionField')}</legend>
             {langs.map((l) => (
-              <textarea key={l} rows={2} placeholder={`Description (${l.toUpperCase()})`} value={form.description[l] ?? ''}
+              <textarea key={l} rows={2} placeholder={`${t('descriptionField')} (${l.toUpperCase()})`} value={form.description[l] ?? ''}
                 onChange={(e) => setML('description', l, e.target.value)}
                 className="mb-2 w-full rounded-lg border border-majolica-200 px-3 py-2" />
             ))}
@@ -182,13 +183,13 @@ export default function TourFormPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <label className="text-sm text-majolica-700">
-              Price (minor units)
+              {t('priceMinor')}
               <input type="number" value={form.priceFrom}
                 onChange={(e) => setForm((f) => ({ ...f, priceFrom: Number(e.target.value) }))}
                 className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
             </label>
             <label className="text-sm text-majolica-700">
-              Currency
+              {t('currencyField')}
               <select value={form.currency}
                 onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value as FormState['currency'] }))}
                 className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2">
@@ -196,7 +197,7 @@ export default function TourFormPage() {
               </select>
             </label>
             <label className="text-sm text-majolica-700">
-              Duration (days)
+              {t('durationDaysField')}
               <input type="number" min={1} value={form.durationDays}
                 onChange={(e) => {
                   const days = Math.max(1, Number(e.target.value));
@@ -210,7 +211,7 @@ export default function TourFormPage() {
                 className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
             </label>
             <label className="text-sm text-majolica-700">
-              Max group size
+              {t('maxGroupField')}
               <input type="number" min={1} value={form.maxGroupSize}
                 onChange={(e) => setForm((f) => ({ ...f, maxGroupSize: e.target.value }))}
                 className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" placeholder="—" />
@@ -223,7 +224,7 @@ export default function TourFormPage() {
               <select value={form.regionId} onChange={(e) => setForm((f) => ({ ...f, regionId: e.target.value }))}
                 className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2">
                 <option value="">—</option>
-                {regions.data?.map((r) => <option key={r.id} value={r.id}>{r.name.en}</option>)}
+                {regions.data?.map((r) => <option key={r.id} value={r.id}>{pick(r.name, locale)}</option>)}
               </select>
             </label>
             <label className="text-sm text-majolica-700">
@@ -231,7 +232,7 @@ export default function TourFormPage() {
               <select value={form.categoryId} onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
                 className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2">
                 <option value="">—</option>
-                {categories.data?.map((c) => <option key={c.id} value={c.id}>{c.name.en}</option>)}
+                {categories.data?.map((c) => <option key={c.id} value={c.id}>{pick(c.name, locale)}</option>)}
               </select>
             </label>
           </div>
@@ -255,7 +256,7 @@ export default function TourFormPage() {
               </label>
               {form.durationDays > 1 && (
                 <label className="text-sm text-majolica-700">
-                  End date
+                  {t('endDate')}
                   <input type="date" value={form.endDate} min={form.startDate || undefined}
                     onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))}
                     className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
@@ -263,9 +264,7 @@ export default function TourFormPage() {
               )}
             </div>
             <span className="mt-1 block text-xs text-majolica-400">
-              {form.durationDays > 1
-                ? `${form.durationDays}-day tour — end date auto-fills from the start.`
-                : 'Optional.'}{' '}
+              {form.durationDays > 1 ? t('multiDayHint', { days: form.durationDays }) : t('optional')}{' '}
               {t('manageDepartures')} → {t('departures')}.
             </span>
           </div>
@@ -288,14 +287,12 @@ export default function TourFormPage() {
         {/* Live preview */}
         <div className="lg:sticky lg:top-24">
           <div className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-majolica-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-ochre-500" /> Preview
+            <span className="h-1.5 w-1.5 rounded-full bg-ochre-500" /> {t('preview')}
           </div>
           <div className="pointer-events-none select-none">
             <TourCardView tour={previewTour} />
           </div>
-          <p className="mt-3 text-xs text-majolica-400">
-            This is how travellers will see your tour card. It updates as you type.
-          </p>
+          <p className="mt-3 text-xs text-majolica-400">{t('previewHint')}</p>
         </div>
       </div>
     </div>

@@ -66,7 +66,7 @@ export default function FirmProfilePage() {
         </label>
 
         <fieldset>
-          <legend className="text-sm font-medium text-majolica-700 mb-1">Description</legend>
+          <legend className="text-sm font-medium text-majolica-700 mb-1">{t('descriptionField')}</legend>
           {langs.map((l) => (
             <input key={l} placeholder={`(${l.toUpperCase()})`} value={form.description[l]}
               onChange={(e) => setForm((f) => ({ ...f, description: { ...f.description, [l]: e.target.value } }))}
@@ -76,37 +76,37 @@ export default function FirmProfilePage() {
 
         <div className="grid grid-cols-2 gap-3">
           <label className="block text-sm text-majolica-700">
-            Phone
+            {t('phoneField')}
             <input value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
               className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
           </label>
           <label className="block text-sm text-majolica-700">
-            Website
+            {t('website')}
             <input value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))}
               placeholder="https://" className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
           </label>
         </div>
 
         <label className="block text-sm text-majolica-700">
-          Address
+          {t('address')}
           <input value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
             className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
         </label>
 
         <label className="block text-sm text-majolica-700">
-          License No.
+          {t('licenseNoField')}
           <input value={form.licenseNo} onChange={(e) => setForm((f) => ({ ...f, licenseNo: e.target.value }))}
             className="mt-1 w-full rounded-lg border border-majolica-200 px-3 py-2" />
         </label>
 
         <div>
-          <span className="text-sm font-medium text-majolica-700">Logo</span>
+          <span className="text-sm font-medium text-majolica-700">{t('logo')}</span>
           <div className="mt-1">
             <ImageUploader images={form.logoUrl ? [form.logoUrl] : []} onChange={(urls) => setForm((f) => ({ ...f, logoUrl: urls[urls.length - 1] ?? '' }))} />
           </div>
         </div>
 
-        {save.isError && <p className="text-sm text-ochre-600">Could not save.</p>}
+        {save.isError && <p className="text-sm text-ochre-600">{t('couldNotSave')}</p>}
         <div className="flex items-center gap-3">
           <button onClick={() => save.mutate()} disabled={save.isPending}
             className="rounded-lg bg-majolica-600 px-6 py-2.5 font-semibold text-white hover:bg-majolica-700 disabled:opacity-50">

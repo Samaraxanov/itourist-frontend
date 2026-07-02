@@ -131,7 +131,7 @@ export default function FirmDashboardPage() {
           ))}
         </Card>
       ) : (
-        <EmptyState icon="🧭" title="No tours yet" hint="Create your first tour to get started." />
+        <EmptyState icon="🧭" title={t('noToursYet')} hint={t('createFirstTour')} />
       )}
     </div>
   );
