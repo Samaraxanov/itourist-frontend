@@ -1,15 +1,15 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../lib/auth';
 import Brand from './Brand';
 import LanguageSwitcher from './LanguageSwitcher';
 import NotificationBell from './NotificationBell';
+import ProfileMenu from './ProfileMenu';
 
 // Marketplace (public + traveller) shell: top navbar + editorial footer.
 export default function Layout() {
   const { t } = useTranslation();
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const linkCls = 'text-sm font-medium text-majolica-700 hover:text-majolica-900';
 
@@ -23,15 +23,8 @@ export default function Layout() {
             {user ? (
               <>
                 {user.role === 'USER' && <Link to="/bookings" className={linkCls}>{t('myBookings')}</Link>}
-                {user.role === 'FIRM' && <Link to="/firm" className={linkCls}>{t('dashboard')}</Link>}
-                {user.role === 'ADMIN' && <Link to="/admin" className={linkCls}>{t('admin')}</Link>}
                 <NotificationBell />
-                <button
-                  onClick={async () => { await logout(); navigate('/'); }}
-                  className="text-sm font-medium text-majolica-600 hover:text-majolica-900"
-                >
-                  {t('logout')}
-                </button>
+                <ProfileMenu />
               </>
             ) : (
               <>
